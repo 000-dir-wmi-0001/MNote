@@ -1,0 +1,41 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} 
+
+{% block head %}
+  <h1 style="text-align: center; margin: 0; padding-top: 2px;">Feedback</h1>
+{% endblock %} 
+
+{% block content %}
+
+<form  method="post" class="forms-style">
+  <h2>Feedback Form</h2>
+  <div class="form-group">
+    <label for="rating">Overall Rating:</label>
+    <select name="rating" id="rating" class="optionslist">
+      <option value="excellent">Excellent</option>
+      <option value="good">Good</option>
+      <option value="fair">Fair</option>
+      <option value="poor">Poor</option>
+    </select>
+  </div><br><br>
+  <div class="form-group">
+    <label for="feedback">What did you like most?</label>
+    <textarea name="feedback" id="feedback" rows="5"></textarea>
+  </div>
+  <div class="form-group">
+    <label for="suggestions">What suggestions do you have for improvement?</label>
+    <textarea name="suggestions" id="suggestions" rows="5"></textarea>
+  </div>
+  <div class="form-group">
+    <label for="name">Name (Optional):</label>
+    <input type="text" name="name" id="name">
+  </div>
+  <div class="form-group">
+    <label for="email">Email (Optional):</label>
+    <input type="email" name="email" id="email">
+  </div>
+  <div class="form-group">
+    <button type="submit" class="btn" onsubmit="clearForm()">Submit Feedback</button>
+  </div>
+</form>
+
+{% endblock %}

@@ -1,0 +1,172 @@
+{% extends "base.html" %} {% block title %}home{% endblock %} 
+
+{% block head %}
+  <h1 style="text-align: center; margin: 0; padding-top: 2px;"> Digital Noteboot</h1>
+{% endblock %} 
+
+{% block content%}
+  <header align="center"><h1>Welcome to the Digital  NoteBook!</h1></header>
+
+
+
+  <div class="paper">
+    <span class="pen"></span>
+  </div>
+
+  <div class="paper" align="center" style="    padding: 20px 20px;
+  /* width: 420px; */
+  width: 90% ;
+  box-sizing: border-box;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+  border-radius: 10px;
+  background-color: #fff;
+  font-size: 16px;
+  text-align: center;
+  margin-top: 5%;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-bottom: 0;">
+    <p style="font-size: xx-large; text-align: left; padding-left: 80px;">Save your thoughts,<br> wherever you are <span class="pen"><br><i  style="font-size: 60px;" class="material-symbols-outlined">ink_pen</i></span><br>      {% if user.is_authenticated %}
+      <br><button class="btn" onclick="location.href = '/'" >Try</button></p>
+      {% else %}
+      <br><button class="btn" onclick="location.href = '/sign-up'" >Try</button></p>
+      {% endif %}</p><br/><br>
+  </div>
+  <br><br><br>
+  <div  align="center">
+    <p style="font-size:xx-large; padding: 0;">Capture what’s on your mind <h5>Add notes, lists, and audio to Keep.</h5></p>
+    
+  </div>
+  <div style="display: flex; padding: 0; margin: 0;">
+    <div style="    padding: 20px 20px;
+    /* width: 420px; */
+    min-width: 400px;
+    /* width: fit-content; */
+    box-sizing: border-box;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    border-radius: 10px;
+    background-color: #fff;
+    font-size: 16px;
+    text-align: left;
+    margin-top: 5%;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-bottom: 0;">
+      <p><h3> Fruits List:</h3> 
+        * Apple <br>
+        * Banana<br>
+        * Orange<br>
+        * Grape<br>
+        * Strawberry<br>
+        * Pineapple<br>
+        * Mango<br>
+        * Watermelon<br>
+        * Blueberry<br>
+        * Kiwi<br>
+        * Pear
+      </p>
+    </div>
+    <div style="   padding: 20px 20px;
+    /* width: 420px; */
+    min-width: 400px;
+    /* width: fit-content; */
+    min-height: 400px;
+    height: fit-content;
+    box-sizing: border-box;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    border-radius: 10px;
+    background-color: #fff;
+    font-size: 16px;
+    text-align: left;
+    margin-top: 5%;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-bottom: 0;">
+      <p><h3>Todo list</h3>Monday: <br>
+        8:00 AM: Attend Math Lecture (MWF) (recurring) <br>
+        9:30 AM: Finish Physics assignment - Due Tuesday <br>
+        11:00 AM: Meet with study group for History exam (Library) <br>
+        12:00 PM: Lunch break <br>
+        1:00 PM: Start working on English essay (Due Wednesday)<br> 
+        3:00 PM: Attend Chemistry lab (MWF) (recurring)<br>
+        5:00 PM: Review notes from Monday's lectures<br><br>
+        Tuesday: <br>
+        
+        8:00 AM: Attend English Literature class (TTH) (recurring) <br>
+        9:30 AM: Submit Physics assignment online<br>
+        10:00 AM: Prepare for Wednesday's presentation in Biology class<br>
+        11:00 AM: Free time - catch up on readings or errands<br>
+        12:00 PM: Attend optional office hours with History professor<br>
+        1:00 PM: Lunch break<br>
+        2:00 PM: Work on English essay (continued)<br>
+        5:00 PM: Gym session<br></p>
+    </div>
+  </div>
+  <div style="display: flex; padding: 0; margin: 0;">
+    <div style="    padding: 20px 20px;
+    /* width: 420px; */
+    min-width: 400px;
+    width: fit-content;
+    min-height: 400px;
+    height: fit-content;
+    box-sizing: border-box;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    border-radius: 10px;
+    background-color: #fff;
+    font-size: 16px;
+    text-align: left;
+    margin-top: 5%;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-bottom: 0;">
+      <p><h3>Quote</h3> "The only person you are destined to become is the person you decide to be."<br><br>  - Ralph Waldo Emerson</p>
+    </div>
+    <div style="    padding: 20px 20px;
+    /* width: 420px; */
+    min-width: 400px;
+    width: fit-content;
+    min-height: 400px;
+    height: fit-content;
+    box-sizing: border-box;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    border-radius: 10px;
+    background-color: #fff;
+    font-size: 16px;
+    text-align: left;
+    margin-top: 5%;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-bottom: 0;">
+      <p><h3>Quote</h3>"The bad news is time flies. The good news is you're the pilot."<br><br>   - Michael Altshuler</p>
+    </div>
+  </div>
+
+
+  <!-- this is last one  -->
+  <div align="center" style="    padding: 20px 20px;
+  /* width: 420px; */
+  width: 90% ;
+  box-sizing: border-box;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+  border-radius: 10px;
+  background-color: #fff;
+  font-size: 16px;
+  text-align: center;
+  margin-top: 5%;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-bottom: 0;">
+    <p style="font-size: xx-large; text-align: center; padding-left: 80px;">Keep every thought
+      {% if user.is_authenticated %}
+      <br><button class="btn" onclick="location.href = '/'" >Try</button></p>
+      {% else %}
+      <br><button class="btn" onclick="location.href = '/sign-up'" >Try</button></p>
+      {% endif %}
+    </div>
+{% endblock %}

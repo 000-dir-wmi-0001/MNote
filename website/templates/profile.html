@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block head %}
+  <h1 style="text-align: center; margin: 0; padding-top: 2px;">Hello! {{ current_user.user_name}}</h1>
+{% endblock %}
+{% block content%}
+    <div class="forms-style" align="center" >
+        <div align="left">
+            <h2 align="center">Profile</h2><br>
+            <br><br>
+            <p><strong>Username:</strong> {{ current_user.user_name }}</p><br>
+            <p><strong>Email:</strong> {{ current_user.email }}</p><br><br>
+        </div>
+        <!-- <p><strong>password:</strong> {{ current_user.password }}</p> -->
+       <a href="{{ url_for('views.edit_profile') }}"> <button type="submit" class="btn" >Edit Profile</button></a>
+       <!-- <button id="delete-account-btn" class="bttn">Delete Account</button> -->
+       <button id="delete-account-btn" onclick="deleteAccount()" class="bttn">Delete MyAccount</button>
+    
+        
+    </div>
+{% endblock %}

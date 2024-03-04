@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Voice Recorder{% endblock %}
+{% block head %}
+  <h1 style="text-align: center; margin: 0; padding-top: 2px;">
+    <i class="material-symbols-outlined" style="padding: 10px; font-size: xx-large;">record_voice_over</i>Speak to Remember
+    <i class="material-symbols-outlined" style="padding: 10px; transform: scaleX(-1); font-size: xx-large;">record_voice_over</i>
+  </h1>
+{% endblock %}
+{% block content %}
+
+  <div class="forms-style">
+    <p id="recording-time" style="text-align:center; font-weight: bolder; font-size: 40px;">00:00</p>
+    <button id="start-recording" style="background: none; border: none; padding-right: 10px;">
+      <i style=" font-size: 40px;" class="material-symbols-outlined">radio_button_unchecked</i>
+    </button>
+    <button id="stop-recording" style="background: none; border: none; padding-right: 10px" disabled>
+      <i style=" font-size: 40px;" class="material-symbols-outlined" >radio_button_checked</i>
+    </button>
+    <button id="save-recording" style="background: none; border: none; padding-right: 10px" disabled>
+      <i  style=" font-size: 40px;" n class="material-symbols-outlined">save</i>
+    </button><br><br>
+    <audio controls id="audio-player"></audio>
+  </div>
+
+
+
+ <div  style="display: flex; marging:0%; padding: 0%; flex-wrap: wrap;">
+  <!-- Add this to your Voice.html file -->
+  {% for recording in recordings %}
+  <div class="player-style">
+    <button type="button"
+    onClick="deleteRecording({{ recording.id }})"
+    class="close"
+    style="background: none; border: none; padding-right: 10px; ">
+    <i
+      style="
+        color: black;
+        margin: 0;
+        padding-top:0;
+        left: -50%;
+        text-align: left;
+        position: top-left;
+      "class="material-symbols-outlined">
+              delete</i></button><br>
+    <audio controls>
+        <source src="{{ url_for('views.serve_audio', filename=recording.data) }}" type="audio/webm">
+        Your browser does not support the audio element.
+    </audio>
+  </div>
+
+  {% endfor %}
+ </div>
+ 
+
+ 
+{% endblock %}
