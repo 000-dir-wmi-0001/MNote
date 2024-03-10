@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,  initial-scale=1.0"> 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
     <!-- <script type="text/javascript" src="{{ url_for('views.voice', filename='record.js') }}"></script> -->
     <script src="{{ url_for('static', filename='record.js') }}"></script>
@@ -33,18 +36,14 @@
                         <div class="title">Main Menu</div>
                         {% if user.is_authenticated %}
                         <ul class="list-items">    
-                            <li><a href="/" id="home"><i class="material-icons" style="margin-right: 20px;"><span class="material-symbols-outlined">
-                                home
-                                </span></i>Home</a></li>
+                            <li><a href="/" id="home"><i style="margin-right: 20px;" class="material-symbols-outlined">home</i>Home</a></li>
                             <li><a href="/note" id="voiceNote" ><i style="margin-right: 20px;" class="material-symbols-outlined">description</i>Note</a></li>
                             <li><a href="/voice" id="voiceNote" ><i style="margin-right: 20px;" class="material-symbols-outlined">mic</i>Voice Note</a></li>
                             <li><a href="/draw" id="profile"><i style="margin-right: 20px;"class="material-symbols-outlined">format_paint</i>Draw</a></li>
                             
                             <li><a href="/profile" id="profile"><i style="margin-right: 20px;" class="material-symbols-outlined">manage_accounts</i>Profile</a></li>
                             <li><a href="/logout" id="logout"><i style="margin-right: 20px;" class="material-symbols-outlined">logout</i>Logout</a></li> 
-                           
-                            <li><a href="/feedback" id="logout"><i  style="margin-right: 20px;" class="material-symbols-outlined">feedback</i>feedback</a></li> 
-                        </ul>
+                                                   </ul>
                         {% else %}
                         <ul class="list-items">
                             <li><a href="/home" id="home"><i class="material-icons" style="margin-right: 20px;"></i>Home</a></li>
@@ -72,10 +71,44 @@
         {% endwith %}
       {% block content %} {% endblock %}
   
-    </main>
-    <footer class="foot">
-          <a href="/about"><h3>About Us</h3></a>
-    </footer>
+    </main><br><br>
+    <footer class="foot" >
+        <div style="display: flex; justify-content: center;">
+        <a href="/about" ><i  style="margin-right: 10px;" class="material-symbols-outlined"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="25" height="25" viewBox="0 0 256 256" xml:space="preserve">
+
+            <defs>
+            </defs>
+            <g style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: none; fill-rule: nonzero; opacity: 1;" transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)" >
+                <path d="M 45 0 C 20.147 0 0 20.147 0 45 c 0 24.853 20.147 45 45 45 s 45 -20.147 45 -45 C 90 20.147 69.853 0 45 0 z M 51.902 70.798 c -1.93 1.544 -3.538 2.684 -4.78 3.391 c -2.58 1.467 -4.688 2.242 -6.446 2.369 c -1.613 0.117 -2.951 -0.227 -3.976 -1.02 c -1.011 -0.781 -1.578 -1.918 -1.684 -3.382 c -0.311 -4.303 1.933 -14.656 6.859 -31.647 c 0.207 -0.731 0.294 -1.377 0.255 -1.919 c -0.029 -0.407 -0.152 -0.398 -0.397 -0.38 c -0.664 0.048 -1.443 0.346 -2.315 0.885 c -0.818 0.507 -2.552 1.989 -5.153 4.409 c -0.195 0.182 -0.5 0.252 -0.773 0.177 c -0.272 -0.076 -0.461 -0.281 -0.478 -0.522 c -0.212 -2.939 1.226 -5.829 3.848 -7.729 c 0.994 -0.721 1.977 -1.356 2.92 -1.886 c 3.299 -1.854 6.214 -2.883 8.661 -3.06 c 1.453 -0.105 2.623 0.095 3.477 0.596 c 0.898 0.528 1.389 1.297 1.461 2.287 c 0.048 0.664 -0.215 2.72 -3.041 12.863 c -3.365 12.129 -4.984 19.487 -4.812 21.87 c 0.025 0.343 0.136 0.607 0.342 0.807 c 0.164 0.163 0.288 0.215 0.344 0.211 c 0.445 -0.032 2.09 -0.648 7.734 -5.657 c 0.202 -0.175 0.505 -0.238 0.769 -0.164 c 0.27 0.078 0.454 0.282 0.471 0.52 C 55.377 66.432 54.179 68.976 51.902 70.798 z M 51.28 25.747 c -3.4 0.246 -6.354 -2.311 -6.6 -5.711 c -0.246 -3.4 2.311 -6.354 5.711 -6.6 s 6.354 2.311 6.6 5.711 C 57.236 22.547 54.679 25.502 51.28 25.747 z" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1;" transform=" matrix(1 0 0 1 0 0) " stroke-linecap="round" />
+            </g>
+            </svg></i></a>
+        <a href="/feedback"  style="padding-bottom: 0; bottom: 0; padding-left: 20px;" id="logout"><i  style="margin-right: 10px;" class="material-symbols-outlined"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="25" height="25" viewBox="0 0 256 256" xml:space="preserve">
+
+            <defs>
+            </defs>
+            <g style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: none; fill-rule: nonzero; opacity: 1;" transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)" >
+                <path d="M 80.071 14.56 H 9.929 C 4.454 14.56 0 19.014 0 24.489 v 41.505 c 0 5.476 4.454 9.93 9.929 9.93 h 3.57 l 9.272 9.271 c 0.585 0.586 1.354 0.879 2.121 0.879 s 1.536 -0.293 2.121 -0.879 l 9.272 -9.271 h 43.786 c 5.475 0 9.929 -4.454 9.929 -9.93 V 24.489 C 90 19.014 85.546 14.56 80.071 14.56 z M 69.381 55.4 H 20.619 c -1.657 0 -3 -1.343 -3 -3 s 1.343 -3 3 -3 h 48.762 c 1.657 0 3 1.343 3 3 S 71.038 55.4 69.381 55.4 z M 69.381 41.083 H 20.619 c -1.657 0 -3 -1.343 -3 -3 s 1.343 -3 3 -3 h 48.762 c 1.657 0 3 1.343 3 3 S 71.038 41.083 69.381 41.083 z" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1;" transform=" matrix(1 0 0 1 0 0) " stroke-linecap="round" />
+            </g>
+            </svg></i></a>
+        <a href="https://www.instagram.com/its_just_life00007/" target="_blank"><i  style="margin-right: 10px;"><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25" height="25" viewBox="0 0 64 64">
+            <path d="M 21.580078 7 C 13.541078 7 7 13.544938 7 21.585938 L 7 42.417969 C 7 50.457969 13.544938 57 21.585938 57 L 42.417969 57 C 50.457969 57 57 50.455062 57 42.414062 L 57 21.580078 C 57 13.541078 50.455062 7 42.414062 7 L 21.580078 7 z M 47 15 C 48.104 15 49 15.896 49 17 C 49 18.104 48.104 19 47 19 C 45.896 19 45 18.104 45 17 C 45 15.896 45.896 15 47 15 z M 32 19 C 39.17 19 45 24.83 45 32 C 45 39.17 39.169 45 32 45 C 24.83 45 19 39.169 19 32 C 19 24.831 24.83 19 32 19 z M 32 23 C 27.029 23 23 27.029 23 32 C 23 36.971 27.029 41 32 41 C 36.971 41 41 36.971 41 32 C 41 27.029 36.971 23 32 23 z"></path>
+            </svg></i></a>
+        <a href="https://twitter.com/its_wmi_00007" target="_blank"><i  style="margin-right: 10px;"><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25" height="25" viewBox="0 0 48 48">
+            <path fill="#212121" fill-rule="evenodd" d="M38,42H10c-2.209,0-4-1.791-4-4V10c0-2.209,1.791-4,4-4h28	c2.209,0,4,1.791,4,4v28C42,40.209,40.209,42,38,42z" clip-rule="evenodd"></path><path fill="#fff" d="M34.257,34h-6.437L13.829,14h6.437L34.257,34z M28.587,32.304h2.563L19.499,15.696h-2.563 L28.587,32.304z"></path><polygon fill="#fff" points="15.866,34 23.069,25.656 22.127,24.407 13.823,34"></polygon><polygon fill="#fff" points="24.45,21.721 25.355,23.01 33.136,14 31.136,14"></polygon>
+            </svg></i></a>
+            <a href="https://github.com/000-dir-wmi-0001" target="_blank"><i  style="margin-right: 10px;"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="25" height="25" viewBox="0 0 256 256" xml:space="preserve">
+
+                <defs>
+                </defs>
+                <g style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: none; fill-rule: nonzero; opacity: 1;" transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)" >
+                    <path d="M 45 0 C 20.147 0 0 20.467 0 45.714 C 0 67.034 14.367 84.944 33.802 90 c -0.013 -5.283 -0.03 -11.763 -0.04 -13.782 c -12.986 2.869 -15.726 -5.595 -15.726 -5.595 c -2.123 -5.481 -5.183 -6.939 -5.183 -6.939 c -4.236 -2.943 0.319 -2.883 0.319 -2.883 c 4.687 0.334 7.156 4.887 7.156 4.887 c 4.163 7.249 10.92 5.153 13.584 3.942 c 0.419 -3.064 1.628 -5.157 2.964 -6.341 c -10.368 -1.199 -21.268 -5.265 -21.268 -23.435 c 0 -5.177 1.824 -9.407 4.81 -12.728 c -0.485 -1.195 -2.083 -6.018 0.452 -12.55 c 0 0 3.92 -1.274 12.84 4.861 c 3.724 -1.051 7.717 -1.578 11.684 -1.596 c 3.967 0.018 7.963 0.545 11.694 1.596 c 8.91 -6.135 12.824 -4.861 12.824 -4.861 c 2.541 6.532 0.943 11.355 0.458 12.55 c 2.993 3.321 4.804 7.551 4.804 12.728 c 0 18.214 -10.92 22.223 -21.315 23.398 c 1.674 1.472 3.166 4.357 3.166 8.781 c 0 3.513 -0.016 11.601 -0.031 17.74 C 76.021 84.439 90 66.74 90 45.714 C 90 20.467 69.853 0 45 0 z" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1;" transform=" matrix(1 0 0 1 0 0) " stroke-linecap="round" />
+                </g>
+                </svg></i></a>
+                <p style="text-align: center; padding: 0; margin: 0; float: right;">Copyright © 2024</p>
+        </div>
+        {% block script %}
+        {% endblock %}
+   </footer>
  
 </body>
 

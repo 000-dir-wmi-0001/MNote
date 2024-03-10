@@ -1,0 +1,26 @@
+<div align="center" class="container">
+  <form method="POST" class="forming-style" id="noteForm">
+    <input type="text" id="title" class="text" name="title" placeholder="Title here ..." value=""
+     style="
+      width: 100%;
+      height:fit-content;
+      overflow-y:auto;
+      resize: none;
+      font-weight: bolder;
+      font-size: larger;
+      border: none;">
+    <textarea
+    rows="10" cols="30"
+      name="note"
+      id="note"
+      class="text"
+      placeholder="Write note here"
+    ></textarea>
+    <br />
+    <div class="palettet">
+      <button type="submit" class="btn">Add Note</button><br><br>
+    </div>
+  </form>
+</div>
+
+

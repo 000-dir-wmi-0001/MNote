@@ -6,111 +6,50 @@
 
 {% block content %}
   <br /><br /><br />
-  <div style="display: flex;">
-
-    <aside class="Left-Side">
-      <div align="center">
-        <ul class="list-group" id="note" style="display: flex; flex-wrap: wrap;">
-          {% for note in user.notes %}
-          <li
-            class="list-group-item Note-list"
-            id="list-group-item-{{ note.id }}"
-            style="list-style-type: none;width: fit-content;" 
-          >
-            <div style="text-align:left;;">
-              <button
-                type="button"
-                class="close"
-                onClick="DeleteNotes({{ note.id }})"
-                style="background: none; border: none; padding-right: 10px; "
-              >
-                <i
-                  style="
-                    color: black;
-                    margin: 0;
-                    text-align: left;
-                    position: top-left;
-                  "class="material-symbols-outlined">
-              delete</i>
+<div style="display: flex;">
+  <aside class="Left-Side">
+    <div align="center">
+      <ul class="list-group" id="note" style="display: flex; flex-wrap: wrap;">
+        {% for note in user.notes %}
+        <li class="list-group-item Note-list" id="list-group-item-{{ note.id }}" style="list-style-type: none;width: fit-content; background-color: {{ note.color }};">
+          <form method="POST" action="{{ url_for('views.update_title_notes', note_id=note.id) }}" id="updateNoteForms-{{ note.id }}">
+            <button type="button" style="background: none; border: none; padding-right: 10px; float: left;" onclick="UpBgColor({{ note.id }})">
+              <i class="material-symbols-outlined" style="color: black; margin: 0; text-align: left; position: top-left;">palette</i>
+            </button>
+            <div style="text-align: left;">
+              <button type="button" class="close" onClick="DeleteNotes({{ note.id }})" style="background: none; border: none; padding-right: 10px;">
+                <i style="color: black; margin: 0; text-align: left; position: top-left;" class="material-symbols-outlined">delete</i>
               </button>
-              <button
-                type="button"
-                class="updates"
-                onclick="UpdateNotes({{ note.id }})"
-                style="background: transparent; border: none; padding-right: 10px;"
-              >
-                <i
-                  id="rotateButton"
-                  style="
-                    color: black;
-                    margin: 0;
-                    text-align: left;
-                    position: top-left;
-                  "class="material-symbols-outlined">save</i>
+              <button type="button" class="updates" onclick="UpdateNotes({{ note.id }})" style="background: transparent; border: none; padding-right: 10px;">
+                <i id="rotateButton" style="color: black; margin: 0; text-align: left; position: top-left;" class="material-symbols-outlined">save</i>
               </button>
             </div>
-            <form
-              method="POST"
-              action="{{ url_for('views.update_title_notes', note_id=note.id) }}"
-              id="updateNoteForms-{{ note.id }}"
-            >
-            <input type="text" id="title" class="text" name="update-titles"
-            style="
-            width: 100%;
-            height:fit-content;
-            overflow-y:auto;
-            resize: none;
-            font-weight: bolder;
-            font-size: larger;
-            border: none;
-            color: rgb(0, 0, 0);" placeholder="" value="{{ note.title }}">
-              <textarea
-                name="update-notes"
-                class="text"
-                cols="30"
-                rows="10"
-                style="
-                  box-sizing: border-box;
-                  height: fit-content;
-                  background: transparent;
-                  border: transparent;
-                "
-              >{{ note.data }}
-            </textarea>
-            </form>
-          </li>
-          {% endfor %}
-        </ul>
-      </div>
-    </aside>
-    <aside class="Right-Side" >
-      <div  style="display: flex; marging:0%; padding: 0%; flex-wrap: wrap;">
-        <!-- Add this to your Voice.html file -->
-        {% for recording in user.recordings %}
-        <div class="player-style">
-          <button type="button"
-          onClick="deleteRecording({{ recording.id }})"
-          class="close"
-          style="background: none; border: none; padding-right: 10px; ">
-          <i
-            style="
-              color: black;
-              margin: 0;
-              padding-top:0;
-              left: -50%;
-              text-align: left;
-              position: top-left;
-            "class="material-symbols-outlined">
-                    delete</i></button><br>
-          <audio controls>
-              <source src="{{ url_for('views.serve_audio', filename=recording.data) }}" type="audio/webm">
-              Your browser does not support the audio element.
-          </audio>
-        </div>
-        
+            <input type="hidden" id="upbgColor-{{ note.id }}" name="bg_color" value="{{ note.color }}">
+            <input type="text" id="title" class="text" name="update-titles" style="width: 100%; height: fit-content; overflow-y: auto; resize: none; font-weight: bolder; font-size: larger; border: none; color: rgb(0, 0, 0); font-family: {{ note.style }}; font-style: {{ note.ftype }};" placeholder="" value="{{ note.title }}">
+            <textarea name="update-notes" class="text" cols="30" rows="10" style="box-sizing: border-box; height: fit-content; background: transparent; border: transparent; font-family: {{ note.style }}; font-style: {{ note.ftype }};">{{ note.data }}</textarea>
+          </form>
+        </li>
         {% endfor %}
+      </ul>
+    </div>
+  </aside>
+  <aside class="Right-Side">
+    <div style="display: flex; margin: 0%; padding: 0%; flex-wrap: wrap;">
+      {% for recording in user.recordings %}
+      <div class="player-style">
+        <button type="button" onClick="deleteRecording({{ recording.id }})" class="close" style="background: none; border: none; padding-right: 10px;">
+          <i style="color: black; margin: 0; padding-top: 0; left: -50%; text-align: left; position: top-left;" class="material-symbols-outlined">delete</i>
+        </button>
+        <br>
+        <audio controls>
+          <source src="{{ url_for('views.serve_audio', filename=recording.data) }}" type="audio/webm">
+          Your browser does not support the audio element.
+        </audio>
       </div>
-    </aside>
+      {% endfor %}
+    </div>
+  </aside>
+  
 </div>
 
 

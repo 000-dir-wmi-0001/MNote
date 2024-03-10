@@ -261,136 +261,127 @@ setTimeout(() => {
 
 
 
-
-
-
-
-
-
-//----------------------x----------------------------x----------------------------------------------------x-------------------
-
-
-///canvas 
-
-// document.addEventListener("DOMContentLoaded", function() {
-//   const canvas = document.getElementById("canvas");
-//   const ctx = canvas.getContext("2d");
-//   let isDrawing = false;
-
-//   canvas.addEventListener("mousedown", startDrawing);
-//   canvas.addEventListener("mousemove", draw);
-//   canvas.addEventListener("mouseup", stopDrawing);
-//   canvas.addEventListener("mouseout", stopDrawing);
-
-//   function startDrawing(e) {
-//       isDrawing = true;
-//       draw(e);
-//   }
-
-//   function draw(e) {
-//       if (!isDrawing) return;
-
-//       ctx.lineWidth = 5;
-//       ctx.lineCap = "round";
-//       ctx.strokeStyle = "black";
-
-//       const rect = canvas.getBoundingClientRect();
-//       const x = e.clientX - rect.left;
-//       const y = e.clientY - rect.top;
-
-//       ctx.lineTo(x, y);
-//       ctx.stroke();
-//       ctx.beginPath();
-//       ctx.moveTo(x, y);
-//   }
-
-//   function stopDrawing() {
-//       isDrawing = false;
-//       ctx.beginPath();
-//   }
-
-//   document.getElementById("save-draft").addEventListener("click", saveDraft);
-
-//   function saveDraft() {
-//       const canvasData = canvas.toDataURL(); // Get the data URL of the canvas
-//       const formData = new FormData();
-//       formData.append("canvas_data", canvasData);
-
-//       fetch("/save_canvas_template_draft", {
-//           method: "POST",
-//           body: formData
-//       })
-//       .then(response => response.json())
-//       .then(data => {
-//           console.log(data);
-//           alert("Draft saved successfully");
-//       })
-//       .catch(error => {
-//           console.error("Error saving draft:", error);
-//           alert("Error saving draft");
-//       });
-//   }
-// });
-
-
-
-
-
-
-
-
-// testing
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// tesing
-
-
-// const closeMessage = (messageContainer) => {
-//   if (messageContainer) {
-//     messageContainer.style.display = 'none';
-//   }
-// };
-
-// document.addEventListener('DOMContentLoaded', () => {
-//   const closeButtons = document.querySelectorAll('.close-btn');
-//   closeButtons.forEach(button => {
-//     button.addEventListener('click', (event) => {
-//       const buttonData = event.target.dataset.messageCategory;
-//       const xhr = new XMLHttpRequest();
-//       xhr.open('POST', '/close_flash_message', true);
-//       xhr.setRequestHeader('Content-Type', 'application/json');
-//       xhr.onreadystatechange = function() {
-//         if (xhr.readyState === 4) {
-//           if (xhr.status === 200) {
-//             // Message removed successfully, hide container
-//             closeMessage(event.target.parentElement);
-//           } else {
-//             console.error('Error closing message:', xhr.status);
-//           }
-//         }
-//       };
-//       xhr.send(JSON.stringify({ category: buttonData }));
-//     });
-//   });
-// });
-
-
-
-
 function clearForm() {
   document.getElementById('feedback-form').reset();
 }
 
+
+
+
+
+// this is testing area
+
+
+// Array of font styles
+// Array of font styles
+  // Array of font styles
+  var fontStyles = ['Caveat', 'sans-serif', 'Poppins', 'Georgia', 'Courier New'];
+
+  // Variable to keep track of current font style index
+  var currentFontIndex = 0;
+
+  // Function to change font style
+  function changeFontStyle() {
+    // Get the text box elements
+    var textBox = document.getElementById('note');
+    var textBoxTitle = document.getElementById('title');
+
+    // Change font style of text boxes
+    textBox.style.fontFamily = fontStyles[currentFontIndex];
+    textBoxTitle.style.fontFamily = fontStyles[currentFontIndex];
+
+    // Update hidden input field with selected font style
+    var hiddenInput = document.getElementById('font_style');
+    hiddenInput.value = fontStyles[currentFontIndex];
+
+    // Increment the font style index or reset to 0 if reached the end of the array
+    currentFontIndex = (currentFontIndex + 1) % fontStyles.length;
+  }
+
+  window.onload = changeFontStyle;
+
+
+  // italic or norma fonts style
+function toggleItalic() {
+
+  console.log('toggleItalic function called');
+  var textBox = document.getElementById('note');
+  var textBoxTitle = document.getElementById('title');
+  var fontStyle = window.getComputedStyle(textBox).fontStyle;
+  var isItalic = fontStyle === 'italic';
+  var hiddenInput = document.getElementById('font_style_italic');
+
+  // Toggle italic style
+  var newStyle = isItalic ? 'normal' : 'italic';
+  textBox.style.fontStyle = newStyle;
+  textBoxTitle.style.fontStyle = newStyle;
+
+  // Update hidden input field with selected italic style
+  hiddenInput.value = newStyle;
+}
+
+
+
+
+// color Picker;
+
+var bgColors = ['#9966FF', '#6699FF', 'white', '#66FF99', 'skyblue','#99FF66'];
+
+// Variable to keep track of current background color index
+var currentBgColorIndex = 0;
+
+// Function to change background color
+function changeBgColor() {
+  // Get the form element and the hidden input field
+  var form = document.getElementById('noteForm');
+  var bgColorInput = document.getElementById('bgColorInput');
+
+  // Change background color of the form
+  var selectedColor = bgColors[currentBgColorIndex];
+  form.style.backgroundColor = selectedColor;
+
+  // Update the value of the hidden input field
+  bgColorInput.value = selectedColor;
+
+  // Increment the background color index or reset to 0 if reached the end of the array
+  currentBgColorIndex = (currentBgColorIndex + 1) % bgColors.length;
+}
+
+window.onload = changeFontStyle;
+
+
+
+// var bgColors = ['#9966FF', '#6699FF', 'white', '#66FF99', 'skyblue', '#99FF66'];
+
+// function UpBgColor(noteId) {
+//   var listItem = document.getElementById('list-group-item-' + noteId);
+//   // Get the input field containing the new background color
+//   var bgColorInput = document.getElementById('upbgColor-' + noteId);
+  
+//   var newBgColor = bgColorInput.value;
+//   var currentIndex = bgColors.indexOf(newBgColor);
+//   var newIndex = (currentIndex + 1) % bgColors.length;
+  
+//   var newColor = bgColors[newIndex];
+//   // form.style.backgroundColor = newColor;
+//   listItem.style.backgroundColor = newBgColor;
+//   bgColorInput.value = newColor;
+// }
+
+var bgColors = ['#9966FF', '#6699FF', 'white', '#66FF99', 'skyblue', '#99FF66'];
+
+function UpBgColor(noteId) {
+  var listItem = document.getElementById('list-group-item-' + noteId);
+  // Get the input field containing the new background color
+  var bgColorInput = document.getElementById('upbgColor-' + noteId);
+  
+  var newBgColor = bgColorInput.value;
+  var currentIndex = bgColors.indexOf(newBgColor);
+  var newIndex = (currentIndex + 1) % bgColors.length;
+  
+  var newColor = bgColors[newIndex];
+  // Set the background color of listItem to the newColor
+  listItem.style.backgroundColor = newColor;
+  // Update the value of the hidden input field to the newColor
+  bgColorInput.value = newColor;
+}

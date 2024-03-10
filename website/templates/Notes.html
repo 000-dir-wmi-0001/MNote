@@ -1,101 +1,76 @@
-{% extends "base.html" %}{% block title %}Notes{% endblock %} {% block content%}
-
+{% extends "base.html" %}
+{% block title %}Notes{% endblock %} 
+{% block content %}
 <div align="center" class="container">
   <form method="POST" class="forming-style" id="noteForm">
-    <input type="text" id="title" class="text" name="title" placeholder="Title here ..." value=""
-     style="
-      width: 100%;
-      height:fit-content;
-      overflow-y:auto;
-      resize: none;
-      font-weight: bolder;
-      font-size: larger;
-      border: none;">
-    <textarea
-    rows="10" cols="30"
-      name="note"
-      id="note"
-      class="text"
-      placeholder="Write note here"
-    ></textarea>
+    <button type="button" style="background: none; border: none; padding-right: 10px; float: left;" onclick="changeFontStyle()">
+      <i class="material-symbols-outlined" style="color: black; margin: 0; text-align: left; position: top-left;">style</i>
+    </button>
+    <button type="button" style="background: none; border: none; padding-right: 10px; float: left;" onclick="toggleItalic()">
+      <i class="material-symbols-outlined" style="color: black; margin: 0; text-align: left; position: top-left;">format_italic</i>
+    </button>
+    <button type="button" style="background: none; border: none; padding-right: 10px; float: left;" onclick="changeBgColor()">
+      <i class="material-symbols-outlined" style="color: black; margin: 0; text-align: left; position: top-left;">palette</i>
+    </button>
+
+    <input type="text" id="title" class="text" name="title" placeholder="Title here ..." value="" style="width: 100%; height:fit-content; overflow-y:auto; resize: none; font-weight: bolder; font-size: larger; border: none; ">
+    <textarea rows="10" cols="30" name="note" id="note" class="text" placeholder="Write note here" style="font-style: normal;"></textarea>
+    <input type="hidden" id="font_style" name="font_style" value="Arial">  <!-- Hidden input field to store font style -->
+    <!-- <input type="hidden" id="fontype" name="fontype" value="normal">  Hidden input field to store font italic style -->
+    <input type="hidden" id="font_style_italic" name="font_style_italic" value="normal">  <!-- Hidden input field to store italic style -->
+    <input type="hidden" id="bgColorInput" name="bg_color" value="white">
     <br />
     <div class="palettet">
-      <button type="submit" class="btn">Add Note</button><br><br>
+      <button type="submit" class="btn" id="addNoteButton">Add Note</button><br><br>
     </div>
   </form>
 </div>
 <br />
 <br />
-
-  <div align="center" class="Note-frame">
-    <ul class="list-group" id="note" style="display: flex; flex-wrap: wrap;">
-      {% for note in user.notes %}
-      <li
-        class="list-group-item Note-list"
-        id="list-group-item-{{ note.id }}"
-        style="list-style-type: none; width: 48%; margin-left:10px; height: fit-content;" 
-      >
-        <div style="text-align:left;;">
-          <button
-            type="button"
-            class="close"
-            onClick="DeleteNote({{ note.id }})"
-            style="background: none; border: none; padding-right: 10px; "
-          >
-            <i
-              style="
-                color: black;
-                margin: 0;
-                text-align: left;
-                position: top-left;
-              "class="material-symbols-outlined">
-              delete</i>
+<span class="dropdown">
+  <button class="dropbtn">Sort By:</button>
+  <span class="dropdown-content">
+    <form action="/note" method="GET">
+      <button type="submit" name="sort_by" value="title" class="stbtn">Title</button>
+    </form>
+    <form action="/note" method="GET">
+      <button type="submit" name="sort_by" value="assen" class="stbtn">Ascending</button>
+    </form>
+    <form action="/note" method="GET">
+      <button type="submit" name="sort_by" value="dess" class="stbtn">Descending</button>
+    </form>
+  </span>
+</span>
+<br><br>
+<div align="center" class="Note-frame">
+  <ul class="list-group" id="note" style="display: flex; flex-wrap: wrap;">
+    {% for note in notes %}
+    <li class="list-group-item Note-list" id="list-group-item-{{ note.id }}" style="list-style-type: none; width: 48%; margin-left:10px; height: fit-content;background-color: {{ note.color }};">
+      <form method="POST" action="{{ url_for('views.update_title_note', note_id=note.id) }}" id="updateNoteForm-{{ note.id }}"> 
+        <div style="text-align:left;">
+          <button type="button" class="close" onClick="DeleteNote({{ note.id }})" style="background: none; border: none; padding-right: 10px;">
+            <i style="color: black; margin: 0; text-align: left; position: top-left;" class="material-symbols-outlined">delete</i>
           </button>
-          <button
-            type="button"
-            class="update"
-            onclick="UpdateNote({{ note.id }})"
-            style="background: transparent; border: none; padding-right: 10px;"
-          >
-            <i
-              id="rotateButton"
-              style="
-                color: black;
-                margin: 0;
-                text-align: left;
-                position: top-left;
-              "class="material-symbols-outlined">save</i>
+          <button type="button" class="update" onclick="UpdateNote({{ note.id }})" style="background: transparent; border: none; padding-right: 10px;">
+            <i id="rotateButton" style="color: black; margin: 0; text-align: left; position: top-left;" class="material-symbols-outlined">save</i>
+          </button>
+          <button type="button" style="background: none; border: none; padding-right: 10px; float: left;" onclick="UpBgColor({{ note.id }})">
+            <i class="material-symbols-outlined" style="color: black; margin: 0; text-align: left; position: top-left;">palette</i>
           </button>
         </div>
-        <form
-          method="POST"
-          action="{{ url_for('views.update_title_note', note_id=note.id) }}"
-          id="updateNoteForm-{{ note.id }}"
-        > 
-          <input type="text" id="title" class="text" name="update-title"
-          style="
-           width: 100%;
-           height:fit-content;
-           overflow-y:auto;
-           resize: none;
-           font-weight: bolder;
-           font-size: larger;
-           border: none;
-           color: rgb(0, 0, 0);"value="{{ note.title }}">
+        <input type="hidden" id="upbgColor-{{ note.id }}" name="bg_color" value="{{ note.color }}">
+        <input type="text" id="title" class="text" name="update-title" style="font-family: {{ note.style }}; font-style:{{ note.ftype }}; width: 100%; height:fit-content; overflow-y:auto; resize: none; font-weight: bolder; font-size: larger; border: none; color: rgb(0, 0, 0);" value="{{ note.title }}">
+        <textarea cols="30" rows="6" name="update-note" class="text" style="font-family: {{ note.style }}; font-style:{{ note.ftype }};" >{{ note.data }}</textarea>
+      </form>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
 
-          <textarea
-            cols="30"
-            rows="5"
-            name="update-note"
-            class="text"
 
-          >{{ note.data }}
-        </textarea>
-        </form>
-      </li>
-      {% endfor %}
-    </ul>
-  </div>
+
+
+
 
 {% block javascript %}
 
@@ -108,13 +83,3 @@
 
 
 
-<!-- 
-<button
-type="button"
-style="background: transparent; border: none; background-color: {{ note.color }}"
-id="changeColorButton-{{ note.id }}"
-class="theme-color"
-onclick="changeThemeColor({{ note.id }})"
->
-<i class="material-icons" style="box-sizing: border-box">palette</i>
-</button> -->

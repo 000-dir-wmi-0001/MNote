@@ -65,6 +65,9 @@ class Note(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     title = db.Column(db.String(150),  nullable=True)
     data = db.Column(db.String(10000))
+    style = db.Column(db.String(100))  
+    ftype=db.Column(db.String(50))
+    color=db.Column(db.String(50))
     date = db.Column(db.DateTime(timezone=True), default=func.now, onupdate=func.now)
     user = db.relationship('User', back_populates='notes')
 
