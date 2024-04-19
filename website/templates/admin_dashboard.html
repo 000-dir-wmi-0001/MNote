@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block head %}
+  <h1 style="text-align: center; margin: 0; padding-top: 2px;">Admin
+    <img src="{{ url_for('views.serve_profile', filename=current_user.profile_picture) }}" alt="Profile picture" width="60" height="60" style="border-radius: 100px; box-sizing: border-box; box-shadow: 0 0 10px rgba(0, 0, 0, .5); float: right;">
+</h1>
+{% endblock %}
+{% block content%}
+    <table border="1" class="form-style">
+        <tr>
+            <th>User_ID</th>
+            <th>Username</th>
+            <th>Email Address</th>
+            <th>Action</th>
+        </tr>
+        {% for u in Users %}
+        {% if not u.is_admin %}
+        <tr>
+            <td>
+                {{ u.id }}
+            </td>
+            <td>
+                {{ u.user_name }}
+            </td>
+            <td>
+                {{ u.email }}
+            </td>
+            <td>
+                <form method="POST" action="{{ url_for('admin.delete_user', user_id=u.id) }}">
+                    <button id="delete-account-btn" style="border: none; background: transparent;" type="submit">
+                        <i style="color: rgb(255, 255, 255); margin: 0; text-align: left; position: top-left;" class="material-symbols-outlined bttn">delete</i>
+                    </button> 
+                  </form>
+            
+            </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </table>
+
+
+{% endblock %}

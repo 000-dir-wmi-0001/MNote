@@ -5,16 +5,28 @@
 {% block content%}
     <div class="forms-style" align="center" >
         <div align="left">
-            <h2 align="center">Profile</h2><br>
-            <br><br>
+            <h2 align="center">Profile</h2>
+            <div align="center">
+
+                    {% if user.profile_picture %}
+                    <img src="{{ url_for('views.serve_profile', filename=user.profile_picture) }}" alt="Profile picture" width="150" height="150" style="cursor: none; border-radius: 100px; box-sizing: border-box; box-shadow: 0 0 10px rgba(0, 0, 0, .5);">
+                    {% else %}
+                    <span>No profile picture</span>
+                    {% endif %}
+            </div>
             <p><strong>Username:</strong> {{ current_user.user_name }}</p><br>
             <p><strong>Email:</strong> {{ current_user.email }}</p><br><br>
         </div>
+        {% if current_user.is_authenticated and current_user.is_admin %}
+        <a href="{{ url_for('views.edit_profile') }}"> <button type="submit" class="btn" >Edit Profile</button></a>
         <!-- <p><strong>password:</strong> {{ current_user.password }}</p> -->
+        {% else %}
        <a href="{{ url_for('views.edit_profile') }}"> <button type="submit" class="btn" >Edit Profile</button></a>
        <!-- <button id="delete-account-btn" class="bttn">Delete Account</button> -->
-       <button id="delete-account-btn" onclick="deleteAccount()" class="bttn">Delete MyAccount</button>
+       <button id="delete-account-btn" onclick="deleteAAccount()" class="bttn">Delete MyAccount</button>
+       {% endif  %}
     
         
     </div>
 {% endblock %}
+   

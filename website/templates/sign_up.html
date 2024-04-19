@@ -3,7 +3,7 @@
   <h1 style="text-align: center; margin: 0; padding-top: 2px;">Create Account</h1>
 {% endblock %} 
 {% block content%}
-    <div align="center"> 
+    <!-- <div align="center"> 
         <form method="POST"  class="form-style">
             <h2>Sign Up</h2>
             <br>
@@ -26,5 +26,36 @@
             <button type="submit" class="btn">Sing Up</button>
             <p class="login-signUp">Click to<a href="{{ url_for('auth.login') }}"> Login</a></p>
         </form>
+    </div> -->
+
+
+
+
+    <div align="center"> 
+        <form method="POST" class="form-style" enctype="multipart/form-data">
+            <h2>Sign Up</h2>
+            <br>
+            <input type="file" name="profile-picture">
+            <br><br>
+            <div class="form-group">
+                <input type="text" id="username" name="username" placeholder="Username">
+            </div>
+            <br/>
+            <div class="form-group">
+                <input type="email" id="email" name="email" placeholder="Email Address">
+            </div>
+            <br />
+            <div class="form-group">
+                <input type="password" id="password1" name="password1" placeholder="Password">
+            </div>
+            <br />
+            <div class="form-group">
+                <input type="password" id="password2" name="password2" placeholder="Confirm Password">
+            </div>
+            <br/>
+            <button type="submit" class="btn">Sing Up</button>
+            <p class="login-signUp">Click to<a href="{{ url_for('auth.login') }}"> Login</a></p>
+        </form>
     </div>
+    
 {% endblock %}

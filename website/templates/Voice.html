@@ -8,7 +8,7 @@
 {% endblock %}
 {% block content %}
 
-  <div class="forms-style">
+  <div class="recorder-style">
     <p id="recording-time" style="text-align:center; font-weight: bolder; font-size: 40px;">00:00</p>
     <button id="start-recording" style="background: none; border: none; padding-right: 10px;">
       <i style=" font-size: 40px;" class="material-symbols-outlined">radio_button_unchecked</i>
@@ -21,13 +21,31 @@
     </button><br><br>
     <audio controls id="audio-player"></audio>
   </div>
-
-
-
  <div  style="display: flex; marging:0%; padding: 0%; flex-wrap: wrap;">
   <!-- Add this to your Voice.html file -->
+  <Table style="    padding: 10px 10px;
+  box-sizing: border-box;
+  border: 2px solid rgba(255, 255, 255, .2);
+  background-color:#fff;
+  border-radius: 5px;
+  font-size: 16px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+  width: fit-content;
+  position: relative;
+  overflow-x:none;
+  margin-top: 10px;
+  height: fit-content;" border="1" align="center">
+    <tr>
+      <th>Id/Sr.No.</th>
+      <th>Content</th>
+      <th>DataTime</th>
+      <th>Durations</th>
+    </tr>
+    <tr>
   {% for recording in recordings %}
-  <div class="player-style">
+
+  <td style="text-align: center;">{{ recording.id }}</td>
+  <td><div >
     <button type="button"
     onClick="deleteRecording({{ recording.id }})"
     class="close"
@@ -42,14 +60,22 @@
         position: top-left;
       "class="material-symbols-outlined">
               delete</i></button><br>
-    <audio controls>
-        <source src="{{ url_for('views.serve_audio', filename=recording.data) }}" type="audio/webm">
-        Your browser does not support the audio element.
-    </audio>
-  </div><br><br>
+ <audio controls id="myaudio">
+    <source src="{{ url_for('views.serve_audio', filename=recording.data) }}" type="audio/webm">
+    Your browser does not support the audio element.
+</audio>
+</div></td>
+  <td>{{  recording.date }}</td>
+  <td align="center">{{recording.duration}}</td>
+</tr>
+
   {% endfor %}
+</Table><br><br>
  </div>
  
 
  
 {% endblock %}
+
+
+

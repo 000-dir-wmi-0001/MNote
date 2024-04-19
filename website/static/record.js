@@ -123,7 +123,7 @@ function performDeleteAccount() {
   .catch(error => console.error('Error:', error));
 }
 
-function deleteAccount() {
+function deleteAAccount() {
   var confirmDelete = confirm("Are you sure you want to delete your account?");
   if (confirmDelete) {
       // Call a function to delete the account
@@ -202,9 +202,20 @@ document.addEventListener("DOMContentLoaded", function() {
           console.log('No recording to save');
           return;
       }
+          // Calculate the duration of the recording
+      const duration = recordingTime.textContent;
+
       const blob = new Blob(chunks, { type: 'audio/webm' });
       const formData = new FormData();
       formData.append('audio', blob);
+      formData.append('duration', duration);
+
+
+
+
+      // const blob = new Blob(chunks, { type: 'audio/webm' });
+      // const formData = new FormData();
+      // formData.append('audio', blob);
 
       fetch('/save_audio', {
           method: 'POST',
@@ -240,8 +251,6 @@ document.addEventListener("DOMContentLoaded", function() {
       recordingTime.textContent = formattedTime;
   }
 });
-
-
 
 
 
@@ -323,7 +332,7 @@ function toggleItalic() {
 
 
 
-// color Picker;
+// applying the color on note 
 
 var bgColors = ['#9966FF', '#6699FF', 'white', '#66FF99', 'skyblue','#99FF66'];
 
@@ -349,26 +358,9 @@ function changeBgColor() {
 
 window.onload = changeFontStyle;
 
+///updating the color  picker in the note editor when clicking on it
 
-
-// var bgColors = ['#9966FF', '#6699FF', 'white', '#66FF99', 'skyblue', '#99FF66'];
-
-// function UpBgColor(noteId) {
-//   var listItem = document.getElementById('list-group-item-' + noteId);
-//   // Get the input field containing the new background color
-//   var bgColorInput = document.getElementById('upbgColor-' + noteId);
-  
-//   var newBgColor = bgColorInput.value;
-//   var currentIndex = bgColors.indexOf(newBgColor);
-//   var newIndex = (currentIndex + 1) % bgColors.length;
-  
-//   var newColor = bgColors[newIndex];
-//   // form.style.backgroundColor = newColor;
-//   listItem.style.backgroundColor = newBgColor;
-//   bgColorInput.value = newColor;
-// }
-
-var bgColors = ['#9966FF', '#6699FF', 'white', '#66FF99', 'skyblue', '#99FF66'];
+var bgColors = ['#fcae1e', 'white', '#fff3c7', 'b7c9f2', '#cdfadb','a1eebd','fff78a'];
 
 function UpBgColor(noteId) {
   var listItem = document.getElementById('list-group-item-' + noteId);
@@ -385,3 +377,30 @@ function UpBgColor(noteId) {
   // Update the value of the hidden input field to the newColor
   bgColorInput.value = newColor;
 }
+
+
+
+
+function deleteImage(imageId) {
+  fetch("/delete-images", {
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ imageId: imageId }),
+  })
+  .then(response => response.json())
+  .then(data => {
+      console.log(data);
+      if (data.message) {
+          // Reload the page after a short delay (2 to 3 seconds)
+          setTimeout(() => {
+              location.reload();
+          }, Math.floor(Math.random() * (3000 - 2000 + 1)) + 2000);
+      } else {
+          alert('Error deleting canvas image');
+      }
+  })
+  .catch(error => console.error("Error deleting canvas image:", error));
+}
+

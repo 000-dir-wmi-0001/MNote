@@ -1,15 +1,25 @@
-from flask import Blueprint, current_app, redirect, render_template, request, flash, jsonify, send_from_directory, url_for
-from flask_login import LoginManager, login_required, current_user
+
+import base64
+from http.client import HTTPException
+from itertools import count
+from tkinter import Image
+from typing import Optional
+from flask import Blueprint,  make_response, redirect, render_template, request, flash, jsonify, send_file, send_from_directory, url_for,current_app
+from flask_login import login_required, current_user
+from pytest import Session
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models import Note, Recording, FeedbackForm
+from .models import CanvasTemplate, Note, Recording, FeedbackForm, User
 from sqlalchemy.sql import func
+from . import create_app
 from . import db
 import json
 import os
 from datetime import datetime
-
-
-
+from flask import send_from_directory
+from io import BytesIO
+import base64
+from PIL import Image, ImageDraw, ImageFont
+from werkzeug.utils import secure_filename
 
 
 
@@ -18,65 +28,15 @@ views = Blueprint('views', __name__)
 
 
 
-
-
 # ------------Pages--------------#
-
-# @views.route('/', methods=['GET', 'POST'])
-# @login_required
-# def home():
-#     if request.method == "POST":
-#         note_text = request.form.get("note")
-#         if len(note_text) > 0:
-#             new_note = Note(data=note_text, user=current_user)
-#             db.session.add(new_note)
-#             db.session.commit()
-#         return render_template("home.html", user=current_user)
-#     return redirect(url_for('auth.home'))
-
-
-# this function  is used to display the notes of a specific user and sorting also included in it
-
-# @views.route('/note', methods=['GET', 'POST'])
-# @login_required
-# def note():
-#     if request.method == 'POST':
-#         note_text = request.form.get('note')
-#         title_text = request.form.get('title')
-#         if len(note_text) < 1:
-#             flash('Note is too short!', category='error')
-#         else:
-#             new_note = Note(data=note_text, title=title_text, user_id=current_user.id, date=datetime.now())
-#             db.session.add(new_note)
-#             db.session.commit()
-#             flash('Note added!', category='success')
-
-#     # Retrieve all notes from the database
-#     # all_notes = Note.query.all()
-#     all_notes = Note.query.filter_by(user_id=current_user.id).all()
-    
-#     # Get the sorting criterion from the query parameters (if provided)
-#     sort_by = request.args.get('sort_by')
-
-#     # Sort the notes based on the chosen criterion
-#     if sort_by == 'title':
-#         sorted_notes = sorted(all_notes, key=lambda x: x.title)
-#     elif sort_by == 'assen':
-#         sorted_notes = sorted(all_notes, key=lambda x: x.id, reverse=False)
-#     elif sort_by == 'dess':
-#         sorted_notes = sorted(all_notes, key=lambda x: x.id, reverse=True)
-#     else:
-#         # If no sorting criterion is provided or it's invalid, return the unsorted notes
-#         sorted_notes = all_notes
-
-#     return render_template('Notes.html', notes=sorted_notes, user=current_user)
-
-
-
 
 @views.route('/', methods=['GET', 'POST'])
 def home():
-    if current_user.is_authenticated:
+    if current_user.is_authenticated and current_user.is_admin:
+        
+        return redirect (url_for('admin.admin_dashboard'))
+    
+    elif current_user.is_authenticated and not current_user.is_admin:
         if request.method == "POST":
             note_text = request.form.get("note")
             if len(note_text) > 0:
@@ -101,49 +61,23 @@ def profile():
 
 
 
-@views.route('/edit-profile', methods=['GET', 'POST'])
-@login_required
-def edit_profile():
-    if request.method == 'POST':
-        # Check if a new password is provided
-        new_password = request.form.get('password')
-        if new_password:
-            # Check if the provided current password matches the stored hash
-            current_password = request.form['current_password']
-            if check_password_hash(current_user.password, current_password):
-
-                current_user.email = request.form['email']
-                current_user.user_name = request.form['username']
-
-                # If the current password is correct, proceed with changing the password
-                hashed_new_password = generate_password_hash(new_password, method='pbkdf2:sha256')
-                # Update the user's password in the database
-                current_user.password = hashed_new_password
-                # flash('Updated successfully!', 'success')
-            else:
-                # If the current password is incorrect, show an error message
-                flash('Incorrect current password. Update failed!.', 'error')
-
-        db.session.commit()
-        flash('Profile updated successfully!', 'success')
-        return redirect(url_for('views.profile'))
-
-    return render_template('edit_profile.html', user=current_user,title="UpdateProfile")
-
 
 
 @views.route('/delete-account', methods=['POST'])
 @login_required
 def delete_account():
     try:
-        # Delete associated recordings, notes, or any other related data
+        # Delete associated recordings, notes, canvases, or any other related data
         user = current_user
         for recording in user.recordings:
             db.session.delete(recording)
         for note in user.notes:
             db.session.delete(note)
-
+        for canvas in user.canvastemplate:
+            db.session.delete(canvas)
+        
         # Delete the user account
+        db.session.delete(user.profile_picture)
         db.session.delete(user)
         db.session.commit()
 
@@ -152,41 +86,126 @@ def delete_account():
         print(f"Error deleting account: {e}")
         return jsonify({'error': 'Error deleting account'}), 500
 
+@views.route('/edit-profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    if request.method == 'POST':
+        # Check if a new password is provided
+        new_password = request.form.get('password')
+        # Check if the provided current password matches the stored hash
+        current_password = request.form['current_password']
+        
+        if check_password_hash(current_user.password, current_password):
+            # If the current password is correct, proceed with changing the password
+            if new_password:
+                hashed_new_password = generate_password_hash(new_password, method='pbkdf2:sha256')
+                current_user.password = hashed_new_password
 
+            # Update other profile information
+            current_user.email = request.form['email']
+            current_user.user_name = request.form['username']
+
+            # Check if a profile picture is uploaded
+            if 'profile-picture' in request.files:
+                file = request.files['profile-picture']
+                if file:
+                    filename = secure_filename(file.filename)
+                    file.save(os.path.join(current_app.config['IMAGE_FOLDER'], filename))
+                    current_user.profile_picture = filename
+
+            flash('Profile updated successfully!', 'success')
+            db.session.commit()
+            return redirect(url_for('views.profile'))
+        else:
+            # If the current password is incorrect, show an error message
+            flash('Incorrect current password. Update failed!', 'error')
+
+    return render_template('edit_profile.html', user=current_user, title="Update Profile")
+
+
+
+
+
+
+@views.route('/upload-profile-picture', methods=['POST'])
+def upload_profile_picture():
+  if request.method == 'POST':
+    file = request.files['profile-picture']
+    if file:
+      filename = secure_filename(file.filename)
+      file.save(os.path.join(current_app.config['IMAGE_FOLDER'], filename))
+      return 'Profile picture uploaded successfully!'
+
+
+
+IMAGE_FOLDER = 'D:/My_Project/App/uploads'
+
+@views.route('/serve-profile/<string:filename>')
+@login_required
+def serve_profile(filename):
+    # Serve audio files from the specified directory
+    return send_from_directory(IMAGE_FOLDER, filename)
+
+
+# @views.route('/default-profile-picture')
+# def default_profile_picture():
+#     return send_from_directory('static', 'Admin.jpg')
+
+# @views.route('/default-profile-picture')
+# def default_profile_picture():
+#     static_directory = os.path.join(os.getcwd(), 'static')  # Get the absolute path to the 'static' directory
+#     return send_from_directory(static_directory, 'Admin.jpg')
 
 # ------------Note--------------#
 
-
-# @views.route('/note', methods=['GET', 'POST'])
-# @login_required
-# def note():
-#     if request.method == 'POST':
-#         note_text = request.form.get('note')
-#         title_text = request.form.get('title')
-#         if len(note_text) < 1:
-#             flash('Note is too short!', category='error')
-#         else:
-#             new_title_note = Note(data=note_text,title=title_text, user_id=current_user.id, date=datetime.now())
-#             db.session.add(new_title_note)
-#             db.session.commit()
-#             flash('Note added!', category='success')
-#     return render_template('Notes.html', user=current_user,title="TextNote")
+@views.route('/note', methods=['GET', 'POST'])
+@login_required
+def note():
+    if request.method == 'POST':
+        note_text = request.form.get('note')
+        title_text = request.form.get('title')
+        font_style = request.form.get('font_style')  # Get font style from the form
+        font_italic = request.form.get('font_style_italic')  # Retrieve font italic value
+        bg_color = request.form.get('bg_color')
 
 
+        if len(note_text) < 1:
+            flash('Note is too short!', category='error')
+        else:
+            new_note = Note(data=note_text, title=title_text, user_id=current_user.id, date=datetime.now(), style=font_style, ftype=font_italic,color=bg_color)  # Store italic style in ftype column
+            db.session.add(new_note)
+            db.session.commit()
+            flash('Note added!', category='success')
+
+    # Retrieve all notes from the database for the current user
+    all_notes = Note.query.filter_by(user_id=current_user.id).all()
 
 
-# @views.route('/delete-note', methods=['POST'])
-# def delete_note():
-#     note = json.loads(request.data)
-#     note_id = note['noteId']
-#     note = Note.query.get(note_id)
-#     if note and note.user_id == current_user.id:
-#         db.session.delete(note)
-#         db.session.commit()
-#     return jsonify({})
     
+    # Get the sorting criterion from the query parameters (if provided)
+    sort_by = request.args.get('sort_by')
+
+    # Sort the notes based on the chosen criterion
+    if sort_by == 'title':
+        sorted_notes = sorted(all_notes, key=lambda x: x.title)
+    elif sort_by == 'assen':
+        sorted_notes = sorted(all_notes, key=lambda x: x.id, reverse=False)
+    elif sort_by == 'dess':
+        sorted_notes = sorted(all_notes, key=lambda x: x.id, reverse=True)
+    else:
+        # If no sorting criterion is provided or it's invalid, return the unsorted notes
+        sorted_notes = all_notes
+
+    return render_template('Notes.html', notes=sorted_notes, user=current_user)
+
+
+ 
+
+ # ------------Note-Deletion--------------#
+
 
 @views.route('/delete-note', methods=['POST'])
+@login_required
 def delete_note():
     note = json.loads(request.data)
     note_id = note['noteId']
@@ -241,9 +260,7 @@ def update_title_note(note_id):
     return redirect(url_for('views.note'))
 
 
-#--- updating from the home page -----
-
-
+#--- updating from the home page -----#
 
 @views.route('/update-title-notes/<int:note_id>', methods=['POST'])
 @login_required
@@ -287,7 +304,11 @@ def save_audio():
         if 'audio' not in request.files:
             return jsonify({'error': 'No audio file received'}), 400
 
+        # audio_file = request.files['audio']
         audio_file = request.files['audio']
+        duration = request.form.get('duration')
+
+
         if audio_file.filename == '':
             return jsonify({'error': 'No selected audio file'}), 400
 
@@ -306,8 +327,10 @@ def save_audio():
             # Save the audio file
             audio_file.save(filepath)
 
+
+
             # Insert into the database
-            recording = Recording(data=filename, user_id=current_user.id)
+            recording = Recording(data=filename,  user_id=current_user.id,duration=duration)
             db.session.add(recording)
             db.session.commit()
 
@@ -378,7 +401,7 @@ def  feedback():
 #----------------------about-us-------------------------#
 @views.route('/about', methods=['POST','GET'])
 def about():
-    return render_template("about.html",user=current_user)
+    return render_template("about.html",user=current_user, title="AboutUs")
 
 
 
@@ -386,28 +409,77 @@ def about():
 
 
 #------------Draw_tamplates-----------#
-TEMPLATES_FOLDER = 'D:\My_Project\App\can_Tampletes'
+
+
+
+@views.route('/display_canvas')
+@login_required
+def display_canvas():
+    canvases_list = CanvasTemplate.query.filter_by(user_id=current_user.id).all()
+    # canvases = CanvasTemplate.query.filter_by(current_user.id).order_by(CanvasTemplate.id.desc()).all()
+    return render_template('display_canvas.html', user=current_user, title="All Pattern", canvases=canvases_list)
+
 @views.route('/draw')
 @login_required
 def draw():
-    return render_template('draw.html',user=current_user,title="DrawNotes")
+    return render_template('draw.html', user=current_user, title="DrawNotes")
+
+@views.route('/save_canvas_image', methods=['POST'])
+def save_canvas_image():
+    try:
+        # Get the canvas data, user ID, and template ID from the request
+        canvas_data = request.json.get('canvasData')
+        user_id = request.json.get('userId')
+        
+        template_id = request.json.get('templateId')
+
+        image_data = canvas_data.split(',')[1]  # Remove the data URL prefix
+        image_bytes = base64.b64decode(image_data)
+        existing_files_count = CanvasTemplate.query.filter_by(user_id=user_id).count()
+        filename = f"canvas_{user_id}_{template_id}_{existing_files_count + 1}.jpg"  # Use .jpg extension
+        filepath = os.path.join(current_app.config['CANVAS_FOLDER'], filename)
+        
+        with open(filepath, 'wb') as f:
+            f.write(image_bytes)
+
+        # Add entry in the database for the canvas template
+        canvas_template = CanvasTemplate(user_id=user_id, template_data=filename, is_draft=True)
+        db.session.add(canvas_template)
+        db.session.commit()
+
+        return jsonify({'message': 'Canvas image saved successfully', 'filename': filename}), 200
+    except Exception as e:
+        return jsonify({'error': f'Error saving canvas image: {str(e)}'}), 500
+
+
+CANVAS_FOLDER = 'D:/My_Project/App/Canvas_Templetes'
+
+@views.route('/image/<path:filename>')
+def serve_image(filename):
+    # Serve audio files from the specified directory
+    return send_from_directory(CANVAS_FOLDER, filename)
 
 
 
 
+@views.route('/delete-images', methods=['POST'])
+@login_required
+def delete_image():
+    try:
+        data = request.get_json()
+        image_id = data.get('imageId')
+        canvas_template = CanvasTemplate.query.get_or_404(image_id)
+        filepath = os.path.join(current_app.config['CANVAS_FOLDER'], canvas_template.template_data)
 
+        db.session.delete(canvas_template)
+        db.session.commit()
 
+        os.remove(filepath)  # Delete the canvas image file from the filesystem
 
-
-
-
-
-
-
-
-
-
-
+        return jsonify({'message': 'Canvas image deleted successfully'}), 200
+    except Exception as e:
+        print(f"Error deleting canvas image: {e}")
+        return jsonify({'error': 'Error deleting canvas image'}), 500
 
 
 
@@ -444,126 +516,3 @@ def internal_error(error):
 
 
 
-
-
-
-# testing
-
-
-# from flask import request
-
-# @views.route('/note', methods=['GET', 'POST'])
-# @login_required
-# def note():
-#     if request.method == 'POST':
-#         note_text = request.form.get('note')
-#         title_text = request.form.get('title')
-#         font_style = request.form.get('font_style')  # Get font style from the form
-
-#         if len(note_text) < 1:
-#             flash('Note is too short!', category='error')
-#         else:
-#             new_note = Note(data=note_text, title=title_text, user_id=current_user.id, date=datetime.now(), style=font_style)
-#             db.session.add(new_note)
-#             db.session.commit()
-#             flash('Note added!', category='success')
-
-#     # Retrieve all notes from the database for the current user
-#     all_notes = Note.query.filter_by(user_id=current_user.id).all()
-    
-#     # Get the sorting criterion from the query parameters (if provided)
-#     sort_by = request.args.get('sort_by')
-
-#     # Sort the notes based on the chosen criterion
-#     if sort_by == 'title':
-#         sorted_notes = sorted(all_notes, key=lambda x: x.title)
-#     elif sort_by == 'assen':
-#         sorted_notes = sorted(all_notes, key=lambda x: x.id, reverse=False)
-#     elif sort_by == 'dess':
-#         sorted_notes = sorted(all_notes, key=lambda x: x.id, reverse=True)
-#     else:
-#         # If no sorting criterion is provided or it's invalid, return the unsorted notes
-#         sorted_notes = all_notes
-
-#     return render_template('Notes.html', notes=sorted_notes, user=current_user)
-
-
-from flask import request
-from datetime import datetime
-from .models import Note
-
-# @views.route('/note', methods=['GET', 'POST'])
-# @login_required
-# def note():
-#     if request.method == 'POST':
-#         note_text = request.form.get('note')
-#         title_text = request.form.get('title')
-#         font_style = request.form.get('font_style')  # Get font style from the form
-#         fontype = request.form.get('fontype')  # Get font style from the form
-
-#         if len(note_text) < 1:
-#             flash('Note is too short!', category='error')
-#         else:
-#             new_note = Note(data=note_text, title=title_text, user_id=current_user.id, date=datetime.now(), style=font_style,ftype=fontype)
-#             db.session.add(new_note)
-#             db.session.commit()
-#             flash('Note added!', category='success')
-
-#     # Retrieve all notes from the database for the current user
-#     all_notes = Note.query.filter_by(user_id=current_user.id).all()
-    
-#     # Get the sorting criterion from the query parameters (if provided)
-#     sort_by = request.args.get('sort_by')
-
-#     # Sort the notes based on the chosen criterion
-#     if sort_by == 'title':
-#         sorted_notes = sorted(all_notes, key=lambda x: x.title)
-#     elif sort_by == 'assen':
-#         sorted_notes = sorted(all_notes, key=lambda x: x.id, reverse=False)
-#     elif sort_by == 'dess':
-#         sorted_notes = sorted(all_notes, key=lambda x: x.id, reverse=True)
-#     else:
-#         # If no sorting criterion is provided or it's invalid, return the unsorted notes
-#         sorted_notes = all_notes
-
-#     return render_template('Notes.html', notes=sorted_notes, user=current_user)
-
-
-
-@views.route('/note', methods=['GET', 'POST'])
-@login_required
-def note():
-    if request.method == 'POST':
-        note_text = request.form.get('note')
-        title_text = request.form.get('title')
-        font_style = request.form.get('font_style')  # Get font style from the form
-        font_italic = request.form.get('font_style_italic')  # Retrieve font italic value
-        bg_color = request.form.get('bg_color')
-
-
-        if len(note_text) < 1:
-            flash('Note is too short!', category='error')
-        else:
-            new_note = Note(data=note_text, title=title_text, user_id=current_user.id, date=datetime.now(), style=font_style, ftype=font_italic,color=bg_color)  # Store italic style in ftype column
-            db.session.add(new_note)
-            db.session.commit()
-            flash('Note added!', category='success')
-
-    # Retrieve all notes from the database for the current user
-    all_notes = Note.query.filter_by(user_id=current_user.id).all()
-    
-    # Get the sorting criterion from the query parameters (if provided)
-    sort_by = request.args.get('sort_by')
-
-    # Sort the notes based on the chosen criterion
-    if sort_by == 'title':
-        sorted_notes = sorted(all_notes, key=lambda x: x.title)
-    elif sort_by == 'assen':
-        sorted_notes = sorted(all_notes, key=lambda x: x.id, reverse=False)
-    elif sort_by == 'dess':
-        sorted_notes = sorted(all_notes, key=lambda x: x.id, reverse=True)
-    else:
-        # If no sorting criterion is provided or it's invalid, return the unsorted notes
-        sorted_notes = all_notes
-
-    return render_template('Notes.html', notes=sorted_notes, user=current_user)

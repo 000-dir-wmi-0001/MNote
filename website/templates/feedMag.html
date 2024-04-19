@@ -1,0 +1,39 @@
+{% extends "base.html" %} {% block title %}Feedbacks{% endblock %} 
+{% block head %}
+  <h1 style="text-align: center; margin: 0; padding-top: 2px;">Feedback Management</h1>
+{% endblock %}
+{% block content%}
+<h1 align="center">All FeedBacks</h1>
+<table border="1" class="form-style" style="overflow-y: hidden; width: fit-content;">
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>User Email</th>
+    <th>Rating</th>
+    <th>Feedback</th>
+    <th>Suggestion</th>
+    <th>Date</th>
+    <th>Action</th>
+  </tr>
+  {% for f in Messages %}
+  <tr>
+    <td>{{ f.id }}</td>
+    <td>{{ f.name }}</td>
+    <td>{{ f.email }}</td>
+    <td>{{ f.rating }}</td>
+    <td>{{ f.answer }}</td>
+    <td>{{ f.suggestion }}</td>
+    <td>{{ f.date }}</td>
+    <td >
+      <form method="POST" action="{{ url_for('admin.delete_feedback', feed_id=f.id) }}">
+        <button id="delete-account-btn" style="border: none; background: transparent;" type="submit">
+            <i style="color: rgb(255, 255, 255); margin: 0; text-align: left; position: top-left;" class="material-symbols-outlined bttn">delete</i>
+        </button> 
+    </form>
+    
+    </td>
+  </tr>
+ {% endfor %}
+</table>
+
+{% endblock %}

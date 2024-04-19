@@ -1,7 +1,15 @@
 {% extends "base.html" %} {% block title %}Home{% endblock %} 
 
 {% block head %}
-  <h1 style="text-align: center; margin: 0; padding-top: 2px;">All Notes</h1>
+  <h1 style="text-align: center; margin: 0; padding-top: 2px;">All Notes
+    <a href="/profile" align="right">
+      {% if user.profile_picture %}
+      <img src="{{ url_for('views.serve_profile', filename=current_user.profile_picture) }}" alt="Profile picture" width="60" height="60" style="border-radius: 100px; box-sizing: border-box; box-shadow: 0 0 10px rgba(0, 0, 0, .5); float: right;">
+      {% else %}
+      <span style="float: right;" ><div class="round"><br>Profile Picture</div></span>
+      {% endif %}
+    </a>
+  </h1>
 {% endblock %} 
 
 {% block content %}
@@ -13,6 +21,10 @@
         {% for note in user.notes %}
         <li class="list-group-item Note-list" id="list-group-item-{{ note.id }}" style="list-style-type: none;width: fit-content; background-color: {{ note.color }};">
           <form method="POST" action="{{ url_for('views.update_title_notes', note_id=note.id) }}" id="updateNoteForms-{{ note.id }}">
+            <div style="float: left;"><mark id="highligh">{{ note.date }}</mark></div>
+            {% set combined_string = (note.data or '') ~ (note.title or '') %}
+            <span style="float:right">Total count: <markt id="highligh">{{ combined_string|replace(" ", "")|length }}</markt></span><br>
+
             <button type="button" style="background: none; border: none; padding-right: 10px; float: left;" onclick="UpBgColor({{ note.id }})">
               <i class="material-symbols-outlined" style="color: black; margin: 0; text-align: left; position: top-left;">palette</i>
             </button>
@@ -40,8 +52,8 @@
         <button type="button" onClick="deleteRecording({{ recording.id }})" class="close" style="background: none; border: none; padding-right: 10px;">
           <i style="color: black; margin: 0; padding-top: 0; left: -50%; text-align: left; position: top-left;" class="material-symbols-outlined">delete</i>
         </button>
-        <br>
-        <audio controls>
+        <br><div><mark id="highlight">{{ recording.date }}</mark></div><br>
+        <audio controls  preload="metadata">
           <source src="{{ url_for('views.serve_audio', filename=recording.data) }}" type="audio/webm">
           Your browser does not support the audio element.
         </audio>
@@ -49,9 +61,8 @@
       {% endfor %}
     </div>
   </aside>
-  
-</div>
 
+</div>
 
   {% block javascript %} {% endblock %} 
 

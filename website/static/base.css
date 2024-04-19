@@ -130,7 +130,9 @@ input[type="checkbox"]{
     /* z-index: -1; */
     position:relative;
     list-style-type: none; 
-    background: #cccccc;
+    /* background: #cccccc; */
+    background: #fff;
+    /* background-color: #676767; */
     padding-bottom: 25px; 
     color: rgb(3, 3, 3); 
     width: 100%;
@@ -155,7 +157,7 @@ form p{
     box-sizing: border-box;
     border: 2px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 0 10px rgba(0, 0, 0, .2);
-    border-radius: 10px;
+    border-radius: 80px 80px 80px 80px;
     background-color: #fff;
     font-size: 16px;
     text-align: center;
@@ -170,12 +172,12 @@ form p{
 .Note-list{
     max-height: 800px;
     /* z-index: -1; */
-    padding: 10px 10px;
+    padding: 15px 15px;
     box-sizing: border-box;
     border: 2px solid rgba(255, 255, 255, .2);
     background-color:#fff;
     /* background-color:rgb(252, 252, 227); */
-    border-radius: 5px;
+    border-radius: 50px 50px  0px 50px;
     font-size: 16px;
     box-shadow: 0 0 10px rgba(0, 0, 0, .2);
 
@@ -221,7 +223,7 @@ li button i{
     box-sizing: border-box;
     border: 2px solid rgba(255, 255, 255, .2);
     background-color:#fff;
-    border-radius: 5px;
+    border-radius: 40px 40px 40px 0px;
     font-size: 16px;
     box-shadow: 0 0 10px rgba(0, 0, 0, .2);
     width: fit-content;
@@ -249,7 +251,23 @@ li button i{
     left: 45%;
     transform: translateX(-50%);
 }
-
+.recorder-style {
+    padding: 0px;
+    padding-bottom: 10px;
+    width: 420px;
+    box-sizing: border-box;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    border-radius:80px 80px 80px 80px;
+    font-size: 16px;
+    text-align: center;
+    margin: 6%;
+    background: #fff;
+    position: relative;
+    left: 45%;
+    transform: translateX(-50%);
+}
 
 input, textarea{
     
@@ -286,10 +304,17 @@ textarea{
 }
 body{
     align-items: center;
-    background:  #ffe4e1b4;
+    /* background:  #ffe4e1b4; */
     /* background: #000000ac;    ; */
     margin: 0;
     padding: 0;
+
+/* this is testing for the dark mode */
+    background-image: url("/static/img1.png");
+    background-size: cover;  /* Adjust as needed (cover, contain, etc.) */
+      /* Adjust as needed (repeat, no-repeat) */
+    background-position: center;  /* Adjust as needed (center, top left, etc.) */
+    height: 100vh;
 }
 
 .btn:hover{
@@ -467,7 +492,8 @@ to {
     display: block;
     position: fixed;
     bottom: 0;
-    background: #cccccc;
+    /* background: #cccccc; */
+    background: #fff;
     width: 100%;
     border-radius: 20px 20px 0 0;
     height: fit-content;
@@ -477,88 +503,6 @@ to {
 
 
 
-
-
-
-
-
-
-
-/* tesing for draw.html */
-/* style.css */
-
-canvas {
-	border: 2px solid black;
-	cursor: pointer;
-    background-color: #000000;
-    width: 1000px;
-    height: 600px;
-
-}
-
-.paint-tools {
-	display: flex;
-	justify-content: space-between;
-	margin-top: 20px;
-	max-width: 500px;
-	align-items: center;
-}
-
-#brush-size {
-	padding: 10px;
-	background-color: #333;
-	color: white;
-	border: none;
-	cursor: pointer;
-}
-
-#pen {
-	padding: 10px;
-	background-color: #0800ff;
-	color: white;
-	border: none;
-	cursor: pointer;
-}
-
-#eraser {
-	padding: 10px;
-	background-color: #ee00cf;
-	color: white;
-	border: none;
-	cursor: pointer;
-}
-
-#color-picker {
-	cursor: pointer;
-}
-.paint-clone{
-    margin-top: 10px;
-    /* margin-left: 30% !important; */
-    /* top: 10px; */
-    border: 5px solid greenyellow;
-    right: 10px;
-    position:relative;
-    align-items: center;
-    /* display: flex; */
-    width: fit-content;
-    height: fit-content;
-
-}
-
-#clear-canvas {
-	padding: 10px;
-	background-color: #ff3333;
-	color: white;
-	border: none;
-	cursor: pointer;
-}
-
-
-
-
-
-
-/* //testing phse */
 .dropdown {
     /* display: flex; */
     position: relative; /* Allows positioning of dropdown content */
@@ -624,4 +568,184 @@ canvas {
     background-color: #fff;
     color: black;
     /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); */
+}
+
+
+
+  #highlight{
+    background-color: #cdfadb;
+    border-radius: 2px;
+    padding-left: 1px;
+    padding-right: 1px;
+
+  }
+  #highligh{
+    background-color: #00000095;
+    color: white;
+    border-radius: 10px;
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+
+
+
+
+
+
+
+canvas {
+    margin: 0;
+    border-radius: 10px;
+    border: 1px solid black;
+    /* cursor: crosshair; */
+    cursor: crosshair;
+    /* margin: 10px 0px 0px 0px; */
+    box-sizing: border-box;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.504);
+}
+.patt{
+    padding: 30px;
+    width: 850px;
+    height: 750px;
+    box-sizing: border-box;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    font-size: 16px;
+    text-align: center;
+    margin: 2% 6% 6% 6%;
+    background: #fff;
+    position: relative;
+    left: 45%;
+    transform: translateX(-50%);
+}
+
+.down{
+    background-color: #019904;
+    color: #ffffff; 
+    border-radius: 5px; 
+    padding: 15px; 
+    border: none;
+    font-weight: bolder;
+    align-items: center;
+    text-align: center;
+    width: 30%;
+}
+.down:hover{
+    cursor: pointer;
+    background-color: #ffffff;
+    color: #019904;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+
+
+.sav{
+    background-color: rgb(5, 5, 184); 
+    color: #fff; 
+    border-radius: 5px; 
+    padding: 15px; 
+    border: none;
+    font-weight: bolder;
+    align-items: center;
+    text-align: center;
+    width: 30%;
+}
+.sav:hover{
+    cursor: pointer;
+    background-color: #fff;
+    color: rgb(5, 5, 184); 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+input[type="range"] {
+    /* accent-color: coral; */
+    accent-color: rgb(5, 5, 184);
+    border: none;
+}
+
+
+
+.img_patt{
+    max-height: 800px;
+    /* z-index: -1; */
+    padding: 15px 15px;
+    box-sizing: border-box;
+    border: 2px solid rgba(255, 255, 255, .2);
+    background-color:#fff;
+    /* background-color:rgb(252, 252, 227); */
+    border-radius: 50px 50px  0px 50px;
+    font-size: 16px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    position:relative;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 0;
+    margin-right: 10px;
+
+}
+
+
+
+
+ /* Style the file input element */
+ input[type="file"] {
+    border: 2px solid #000000;
+    background-color:transparent;
+    color: white;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%; /* Make it completely round */
+    font-size: 0; /* Hide the default text label */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Style the label inside the file input */
+input[type="file"]::before {
+    content: 'Choose File';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Style the file input when focused */
+input[type="file"]:focus {
+    outline: none;
+}
+
+
+
+.back{
+    padding-top: 5px;
+    text-align: center;
+    background: none; 
+    border: none; 
+    background-color: black; 
+    margin-top: 1%; 
+    color: #fff; 
+    box-sizing: border-box; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, .5); 
+    border-radius: 5px;
+} 
+.back:hover{ 
+    background-color: #fff; 
+    color: #000;
+}
+
+.round{
+    width: 60px;
+    height: 60px;
+    /* border: 2px solid #000; */
+    background-color: #000000;
+    color: #ffffff;
+    border-radius: 100px; 
+    box-sizing: border-box; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, .5); 
+    float: right;
+    font-size:  10px;
+    line-height: 60px/1.3;
+    text-align: center;
+    cursor: pointer;
 }

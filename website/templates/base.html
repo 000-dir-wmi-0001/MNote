@@ -34,24 +34,31 @@
                     </label>
                     <nav id="sidebar">
                         <div class="title">Main Menu</div>
-                        {% if user.is_authenticated %}
-                        <ul class="list-items">    
-                            <li><a href="/" id="home"><i style="margin-right: 20px;" class="material-symbols-outlined">home</i>Home</a></li>
-                            <li><a href="/note" id="voiceNote" ><i style="margin-right: 20px;" class="material-symbols-outlined">description</i>Note</a></li>
-                            <li><a href="/voice" id="voiceNote" ><i style="margin-right: 20px;" class="material-symbols-outlined">mic</i>Voice Note</a></li>
-                            <li><a href="/draw" id="profile"><i style="margin-right: 20px;"class="material-symbols-outlined">format_paint</i>Draw</a></li>
-                            
-                            <li><a href="/profile" id="profile"><i style="margin-right: 20px;" class="material-symbols-outlined">manage_accounts</i>Profile</a></li>
-                            <li><a href="/logout" id="logout"><i style="margin-right: 20px;" class="material-symbols-outlined">logout</i>Logout</a></li> 
-                                                   </ul>
+                        {% if current_user.is_authenticated and current_user.is_admin %}
+                            <ul class="list-items">
+                                <li><a href="/admin_dashboard" id="home"><i style="margin-right: 20px;" class="material-symbols-outlined">space_dashboard</i>Dashbord</a></li>
+                                <li><a href="/feedM" id="home"><i style="margin-right: 20px;" class="material-symbols-outlined">forum</i>All Feedbacks</a></li>                                    
+                                <li><a href="/profile" id="profile"><i style="margin-right: 20px;" class="material-symbols-outlined">manage_accounts</i>Profile</a></li>                            
+                                <li><a href="/logout" id="logout"><i style="margin-right: 20px;" class="material-symbols-outlined">logout</i>Logout</a></li> 
+                            </ul>
+                        {% elif current_user.is_authenticated and not current_user.is_admin  %}
+                                <ul class="list-items">    
+                                    <li><a href="/" id="home"><i style="margin-right: 20px;" class="material-symbols-outlined">home</i>Home</a></li>
+                                    <li><a href="/note" id="voiceNote" ><i style="margin-right: 20px;" class="material-symbols-outlined">description</i>Note</a></li>
+                                    <li><a href="/voice" id="voiceNote" ><i style="margin-right: 20px;" class="material-symbols-outlined">mic</i>Voice Note</a></li>
+                                    <li><a href="/display_canvas" id="profile"><i style="margin-right: 20px;"class="material-symbols-outlined">format_paint</i>Draw</a></li>
+                                    <li><a href="/profile" id="profile"><i style="margin-right: 20px;" class="material-symbols-outlined">manage_accounts</i>Profile</a></li>
+                                    <li><a href="/logout" id="logout"><i style="margin-right: 20px;" class="material-symbols-outlined">logout</i>Logout</a></li> 
+                                </ul>
                         {% else %}
-                        <ul class="list-items">
-                            <li><a href="/home" id="home"><i class="material-icons" style="margin-right: 20px;"></i>Home</a></li>
-                            <li><a href="/login" id="login"><i class="material-icons" style="margin-right: 20px;"></i>Login</a></li>
-                            <li><a href="/sign-up" id="signUP"><i class="material-icons" style="margin-right: 20px;"></i>Sign Up</a></li>
-                        </ul>
+                            <ul class="list-items">
+                                <li><a href="/home" id="home"><i class="material-icons" style="margin-right: 20px;"></i>Home</a></li>
+                                <li><a href="/login" id="login"><i class="material-icons" style="margin-right: 20px;"></i>Login</a></li>
+                                <li><a href="/sign-up" id="signUP"><i class="material-icons" style="margin-right: 20px;"></i>Sign Up</a></li>
+                            </ul>
                         {% endif %}
                     </nav>
+                    
                 </div>
             </li>
             <li class="mystyle">{% block head %}<h1 style="text-align: center; margin: 0; padding-top: 2px;">Write to Remember</h1>{% endblock %}</li>
@@ -106,7 +113,7 @@
                 </svg></i></a>
                 <p style="text-align: center; padding: 0; margin: 0; float: right;">Copyright © 2024</p>
         </div>
-        {% block script %}
+        {% block javascript %}
         {% endblock %}
    </footer>
  

@@ -1,19 +1,279 @@
 {% extends "base.html" %}
-{% block title %}Draw{% endblock %}
 {% block head %}
   <h1 style="text-align: center; margin: 0;">Draw Pattern</h1>
 {% endblock %}
 
 {% block content %}
-<h1 align="center">this testing</h1>
+<br>
 <div align="center">
-  <canvas class="canvas" width="400" height="400" align="center"></canvas>
+    <button type="button" class="btn"><a href="/display_canvas">All Patterns</a></button>
 </div>
+<div align="center" class="patt">
+  <input type="hidden" id="userId" value="{{ current_user.id }}">
+  <input type="hidden" id="templateId" value="{{ template_id }}">
+  <canvas id="drawingCanvas" width="800" height="600"></canvas>
+  <div style="display: flex;">
+      <input type="range" id="brushSize" min="1" max="10" value="5" style=" width: 400px;" >
+      <button id="clearButton" class="bttn" style="margin-left: 10px;">Clear</button>
+      <button id="saveButton" class="sav" style="margin-left: 10px;">Save</button>
+      <button id="downloadButton" class="down" style="margin-left: 10px;">Download</button>
+  </div>
+</div>
+<script>
+  const canvas = document.getElementById('drawingCanvas');
+  const ctx = canvas.getContext('2d');
+  let isDrawing = false;
+  let lastX = 0;
+  let lastY = 0;
+  let hue = 0;
+  let direction = true;
 
-{% endblock %}
+  // Set default background color to black
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 
-{% block script %}
-<script type="text/javascript">
+  // Function to draw on the canvas
+  function draw(e) {
+      if (!isDrawing) return;
+      ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+      ctx.lineWidth = document.getElementById('brushSize').value;
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.stroke();
+      [lastX, lastY] = [e.offsetX, e.offsetY];
+      hue++;
+      if (hue >= 360) {
+          hue = 0;
+      }
+      if (ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
+          direction = !direction;
+      }
+      if (direction) {
+          ctx.lineWidth++;
+      } else {
+          ctx.lineWidth--;
+      }
+  }
+
+  // Event listeners for mouse actions
+  canvas.addEventListener('mousedown', (e) => {
+      isDrawing = true;
+      [lastX, lastY] = [e.offsetX, e.offsetY];
+  });
+
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', () => isDrawing = false);
+  canvas.addEventListener('mouseout', () => isDrawing = false);
+
+
+
+
+  // Event listener for the clear button
+  document.getElementById('clearButton').addEventListener('click', () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+  });
+
+  // Event listener for the save button
+  document.getElementById('saveButton').addEventListener('click', () => {
+      const canvasData = canvas.toDataURL(); // Get canvas data as a data URL
+      const userId = document.getElementById('userId').value; // Get the user ID from the hidden input
+      const templateId = document.getElementById('templateId').value; // Get the template ID from the hidden input
+
+      fetch('/save_canvas_image', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ canvasData, userId, templateId }) // Send canvas data, user ID, and template ID
+      })
+      .then(response => response.json())
+      .then(data => {
+          console.log(data);
+          alert('Canvas image saved successfully');
+      })
+      .catch(error => {
+          console.error('Error saving canvas image:', error);
+          alert('Error saving canvas image');
+      });
+  });
+
+  // Event listener for the download button
+  document.getElementById('downloadButton').addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = 'canvas.png';
+      link.href = canvas.toDataURL();
+      link.click();
+  });
 </script>
+
+<!-- <script>
+  // const canvas = document.getElementById('drawingCanvas');
+  // const ctx = canvas.getContext('2d');
+  // let isDrawing = false;
+  // let lastX = 0;
+  // let lastY = 0;
+  // let hue = 0;
+  // let direction = true;
+
+  // function draw(e) {
+  //     if (!isDrawing) return;
+  //     ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+  //     ctx.lineWidth = document.getElementById('brushSize').value;
+  //     ctx.beginPath();
+  //     ctx.moveTo(lastX, lastY);
+  //     ctx.lineTo(e.offsetX, e.offsetY);
+  //     ctx.stroke();
+  //     [lastX, lastY] = [e.offsetX, e.offsetY];
+  //     hue++;
+  //     if (hue >= 360) {
+  //         hue = 0;
+  //     }
+  //     if (ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
+  //         direction = !direction;
+  //     }
+  //     if (direction) {
+  //         ctx.lineWidth++;
+  //     } else {
+  //         ctx.lineWidth--;
+  //     }
+  // }
+
+  // canvas.addEventListener('mousedown', (e) => {
+  //     isDrawing = true;
+  //     [lastX, lastY] = [e.offsetX, e.offsetY];
+  // });
+
+  // canvas.addEventListener('mousemove', draw);
+  // canvas.addEventListener('mouseup', () => isDrawing = false);
+  // canvas.addEventListener('mouseout', () => isDrawing = false);
+
+  // document.getElementById('eraserButton').addEventListener('click', () => {
+  //     ctx.strokeStyle = document.getElementById('backgroundColor').value;
+  // });
+  const canvas = document.getElementById('drawingCanvas');
+  const ctx = canvas.getContext('2d');
+  let isDrawing = false;
+  let lastX = 0;
+  let lastY = 0;
+  let hue = 0;
+  let direction = true;
+
+  // Function to draw on the canvas
+  function draw(e) {
+      if (!isDrawing) return;
+      ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+      ctx.lineWidth = document.getElementById('brushSize').value;
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.stroke();
+      [lastX, lastY] = [e.offsetX, e.offsetY];
+      hue++;
+      if (hue >= 360) {
+          hue = 0;
+      }
+      if (ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
+          direction = !direction;
+      }
+      if (direction) {
+          ctx.lineWidth++;
+      } else {
+          ctx.lineWidth--;
+      }
+  }
+
+  // Event listeners for mouse actions
+  canvas.addEventListener('mousedown', (e) => {
+      isDrawing = true;
+      [lastX, lastY] = [e.offsetX, e.offsetY];
+  });
+
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', () => isDrawing = false);
+  canvas.addEventListener('mouseout', () => isDrawing = false);
+
+  // Event listener for the eraser button
+  document.getElementById('eraserButton').addEventListener('click', () => {
+      // Set the canvas background color as the new stroke color (to act as an eraser)
+      ctx.strokeStyle = document.getElementById('backgroundColor').value;
+  });
+
+  // document.getElementById('undoButton').addEventListener('click', () => {
+  //     ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // });
+
+  // document.getElementById('redoButton').addEventListener('click', () => {
+  //     // Implement redo functionality if needed
+  // });
+  let historyStack = [];
+let futureStack = [];
+
+function saveCanvasState() {
+  const image = new Image();
+  image.src = canvas.toDataURL();
+  historyStack.push(image);
+  futureStack = [];
+}
+
+document.getElementById('undoButton').addEventListener('click', () => {
+  if (historyStack.length > 0) {
+    const previousImage = historyStack.pop();
+    futureStack.push(canvas.toDataURL());
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(previousImage, 0, 0);
+  }
+});
+
+document.getElementById('redoButton').addEventListener('click', () => {
+  if (futureStack.length > 0) {
+    const nextImageUrl = futureStack.pop();
+    const nextImage = new Image();
+    nextImage.src = nextImageUrl;
+    historyStack.push(canvas.toDataURL());
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(nextImage, 0, 0);
+  }
+});
+
+document.getElementById('clearButton').addEventListener('click', () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+});
+
+
+  document.getElementById('saveButton').addEventListener('click', () => {
+      const canvasData = canvas.toDataURL(); // Get canvas data as a data URL
+      const userId = document.getElementById('userId').value; // Get the user ID from the hidden input
+      const templateId = document.getElementById('templateId').value; // Get the template ID from the hidden input
+
+      fetch('/save_canvas_image', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ canvasData, userId, templateId }) // Send canvas data, user ID, and template ID
+      })
+      .then(response => response.json())
+      .then(data => {
+          console.log(data);
+          alert('Canvas image saved successfully');
+      })
+      .catch(error => {
+          console.error('Error saving canvas image:', error);
+          alert('Error saving canvas image');
+      });
+  });
+
+  document.getElementById('downloadButton').addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = 'canvas.png';
+      link.href = canvas.toDataURL();
+      link.click();
+  });
+</script> -->
+
+
+
 {% endblock %}
+

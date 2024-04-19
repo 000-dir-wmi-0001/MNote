@@ -1,26 +1,199 @@
-<div align="center" class="container">
-  <form method="POST" class="forming-style" id="noteForm">
-    <input type="text" id="title" class="text" name="title" placeholder="Title here ..." value=""
-     style="
-      width: 100%;
-      height:fit-content;
-      overflow-y:auto;
-      resize: none;
-      font-weight: bolder;
-      font-size: larger;
-      border: none;">
-    <textarea
-    rows="10" cols="30"
-      name="note"
-      id="note"
-      class="text"
-      placeholder="Write note here"
-    ></textarea>
-    <br />
-    <div class="palettet">
-      <button type="submit" class="btn">Add Note</button><br><br>
-    </div>
-  </form>
-</div>
+{% extends "base.html" %}
+{% block title %}Draw{% endblock %}
+{% block head %}
+  <h1 style="text-align: center; margin: 0;">Draw Pattern</h1>
+{% endblock %}
+
+{% block content %}
+<br><br>
+<div id="canvas_div" style="overflow-x: auto;">
+  <canvas id="canvas" width="900" height="360"></canvas>
+  <button onclick="javascript:clearArea();return false;">Clear Area</button>
+  Line width : <select id="selWidth">
+      <option value="11">11</option>
+      <option value="13" selected="selected">13</option>
+      <option value="15">15</option>
+  </select>
+  Color : <select id="selColor">
+      <option value="black">black</option>
+      <option value="blue" selected="selected">blue</option>
+      <option value="red">red</option>
+      <option value="green">green</option>
+      <option value="yellow">yellow</option>
+      <option value="gray">gray</option>
+  </select><br><br>
+  <button onclick="setEraserMode(true);return false;">Eraser</button>
+  <input type="color" id="bgColorPicker" style="width: 60px; height: 20px;">
+  </div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+const canvas = document.getElementById('canvas');
+const context = canvas.getContext('2d');
+let isDrawing = false;
+let x = 0;
+let y = 0;
+var offsetX;
+var offsetY;
+
+function startup() {
+  canvas.addEventListener('touchstart', handleStart);
+  canvas.addEventListener('touchend', handleEnd);
+  canvas.addEventListener('touchcancel', handleCancel);
+  canvas.addEventListener('touchmove', handleMove);
+  canvas.addEventListener('mousedown', (e) => {
+    x = e.offsetX;
+    y = e.offsetY;
+    isDrawing = true;
+  });
+
+  canvas.addEventListener('mousemove', (e) => {
+    if (isDrawing) {
+      drawLine(context, x, y, e.offsetX, e.offsetY);
+      x = e.offsetX;
+      y = e.offsetY;
+    }
+  });
+
+  canvas.addEventListener('mouseup', (e) => {
+    if (isDrawing) {
+      drawLine(context, x, y, e.offsetX, e.offsetY);
+      x = 0;
+      y = 0;
+      isDrawing = false;
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", startup);
+
+const ongoingTouches = [];
+
+function handleStart(evt) {
+  evt.preventDefault();
+  const touches = evt.changedTouches;
+  offsetX = canvas.getBoundingClientRect().left;
+  offsetY = canvas.getBoundingClientRect().top;
+  for (let i = 0; i < touches.length; i++) {
+    ongoingTouches.push(copyTouch(touches[i]));
+  }
+}
+
+function handleMove(evt) {
+  evt.preventDefault();
+  const touches = evt.changedTouches;
+  for (let i = 0; i < touches.length; i++) {
+    const color = document.getElementById('selColor').value;
+    const idx = ongoingTouchIndexById(touches[i].identifier);
+    if (idx >= 0) {
+      context.beginPath();
+      context.moveTo(ongoingTouches[idx].clientX - offsetX, ongoingTouches[idx].clientY - offsetY);
+      context.lineTo(touches[i].clientX - offsetX, touches[i].clientY - offsetY);
+      context.lineWidth = document.getElementById('selWidth').value;
+      context.strokeStyle = color;
+      context.lineJoin = "round";
+      context.closePath();
+      context.stroke();
+      ongoingTouches.splice(idx, 1, copyTouch(touches[i]));  // swap in the new touch record
+    }
+  }
+}
+
+function handleEnd(evt) {
+  evt.preventDefault();
+  const touches = evt.changedTouches;
+  for (let i = 0; i < touches.length; i++) {
+    const color = document.getElementById('selColor').value;
+    let idx = ongoingTouchIndexById(touches[i].identifier);
+    if (idx >= 0) {
+      context.lineWidth = document.getElementById('selWidth').value;
+      context.fillStyle = color;
+      ongoingTouches.splice(idx, 1);  // remove it; we're done
+    }
+  }
+}
+
+function handleCancel(evt) {
+  evt.preventDefault();
+  const touches = evt.changedTouches;
+  for (let i = 0; i < touches.length; i++) {
+    let idx = ongoingTouchIndexById(touches[i].identifier);
+    ongoingTouches.splice(idx, 1);  // remove it; we're done
+  }
+}
+
+function copyTouch({ identifier, clientX, clientY }) {
+  return { identifier, clientX, clientY };
+}
+
+function ongoingTouchIndexById(idToFind) {
+  for (let i = 0; i < ongoingTouches.length; i++) {
+    const id = ongoingTouches[i].identifier;
+    if (id === idToFind) {
+      return i;
+    }
+  }
+  return -1;    // not found
+}
+
+function drawLine(context, x1, y1, x2, y2) {
+  context.beginPath();
+  context.strokeStyle = document.getElementById('selColor').value;
+  context.lineWidth = document.getElementById('selWidth').value;
+  context.lineJoin = "round";
+  context.moveTo(x1, y1);
+  context.lineTo(x2, y2);
+  context.closePath();
+  context.stroke();
+}
+
+function clearArea() {
+    context.setTransform(1, 0, 0, 1, 0, 0);
+    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+}
+
+let isEraserMode = false;
+
+function setEraserMode(eraser) {
+  isEraserMode = eraser;
+}
+
+// Update the drawLine function to use transparent color for eraser mode
+function drawLine(context, x1, y1, x2, y2) {
+  context.beginPath();
+  if (isEraserMode) {
+    context.strokeStyle = 'rgba(255, 255, 255, 0)'; // Transparent color
+  } else {
+    context.strokeStyle = document.getElementById('selColor').value;
+  }
+  context.lineWidth = document.getElementById('selWidth').value;
+  context.lineJoin = "round";
+  context.moveTo(x1, y1);
+  context.lineTo(x2, y2);
+  context.closePath();
+  context.stroke();
+}
+
+// Add event listener for background color picker
+document.getElementById('bgColorPicker').addEventListener('input', function() {
+  const bgColor = this.value;
+  canvas.style.backgroundColor = bgColor;
+});
+
+</script>
+{% endblock %}
 
 
+
+
+ <!-- <a href="/profile" align="right">
+      <img src="{{ url_for('views.serve_profile', filename=user.profile_picture) }}" alt="Profile picture" width="60" height="60" style=" border-radius: 100px; box-sizing: border-box; box-shadow: 0 0 10px rgba(0, 0, 0, .5); float: right;">
+    </a> -->
+    <!-- <a href="/profile" align="right">
+      {% if user.profile_picture %}
+      <img src="{{ url_for('views.serve_profile', filename=current_user.profile_picture) }}" alt="Profile picture" width="60" height="60" style="border-radius: 100px; box-sizing: border-box; box-shadow: 0 0 10px rgba(0, 0, 0, .5); float: right;">
+      {% else %}
+      <span>No profile picture</span>
+      {% endif %}
+    </a> -->

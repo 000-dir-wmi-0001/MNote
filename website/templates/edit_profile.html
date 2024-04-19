@@ -4,8 +4,9 @@
   <h1 style="text-align: center; margin: 0; padding-top: 2px;">Profile Update!!</h1>
 {% endblock %}
 {% block content%}
-    <form action="{{ url_for('views.edit_profile') }}" method="POST" class="forms-style">
-        <h2>Edit Profile</h2><br>
+    <!-- <form action="{{ url_for('views.edit_profile') }}" method="POST" class="forms-style">
+        <h2>Edit Profile</h2>
+        <br>
         <input type="text" id="username" name="username" value="{{ current_user.user_name }}" required placeholder="Username" >
         <br><br>
         <input type="email" id="email" name="email" value="{{ current_user.email }}" required placeholder="Email" >
@@ -18,5 +19,89 @@
         </div>
         <br><br>
         <button type="submit" class="btn btn-primary" value="Save Changes">Save</button>
+    </form> -->
+    <!-- <div align="center">
+        <button id="cancelButton" class="back"><span class="material-symbols-outlined">arrow_back</span></button>
+
+    </div>
+    <form action="/edit-profile" method="POST" enctype="multipart/form-data" class="forms-style">
+        <h2>Edit Profile</h2>
+
+        <input type="file" id="profile-picture" name="profile-picture" placeholder="Profile Picture"><br>
+        <label for="profile-picture" style="font-weight: bold;">Profile Picture</label>
+
+        <br><br>
+
+        <input type="text" id="username" name="username" value="{{ current_user.user_name }}" required placeholder="Username" >
+        <br><br>
+        <input type="email" id="email" name="email" value="{{ current_user.email }}" required placeholder="Email" >
+        <br><br>
+        <div class="password-container">
+            <input type="password" id="current_password" name="current_password" placeholder="Current Password" >
+            <i class="fas fa-eye" id="togglesPassword"></i><br>
+            <input type="password" id="password" name="password" placeholder="New Password" >
+            <i class="fas fa-eye" id="togglePassword"></i>
+        </div>
+        <br><br>
+        <button type="submit" class="btn btn-primary" value="Save Changes">Save</button>
+       
+        
     </form>
+    <script>
+        // Function to redirect when leaving the page
+        function redirectToHome() {
+            window.location.href = "/profile";
+        }
+    
+        // Add event listener to cancel button
+        document.getElementById("cancelButton").addEventListener("click", redirectToHome);
+    
+        // Add event listener for when the user navigates away from the page
+        window.addEventListener("unload", function () {
+            redirectToHome();
+        });
+    </script> -->
+    <div align="center">
+        <button id="cancelButton" class="back"><span class="material-symbols-outlined">arrow_back</span></button>
+    </div>
+    
+    <form action="{{ url_for('views.edit_profile') }}" method="POST" enctype="multipart/form-data" class="forms-style">
+        <h2>Edit Profile</h2>
+    
+        <input type="file" id="profile-picture" name="profile-picture" accept="image/*"><br>
+        <label for="profile-picture" style="font-weight: bold;">Profile Picture</label>
+    
+        <br><br>
+    
+        <input type="text" id="username" name="username" value="{{ current_user.user_name }}" required placeholder="Username" >
+        <br><br>
+        <input type="email" id="email" name="email" value="{{ current_user.email }}" required placeholder="Email" >
+        <br><br>
+        <div class="password-container">
+            <input type="password" id="current_password" name="current_password" placeholder="Current Password" >
+            <i class="fas fa-eye" id="togglesPassword"></i><br>
+            <input type="password" id="password" name="password" placeholder="New Password" >
+            <i class="fas fa-eye" id="togglePassword"></i>
+        </div>
+        <br><br>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+    
+    <script>
+        // Function to redirect when leaving the page
+        function redirectToProfile() {
+            window.location.href = "/profile";
+        }
+    
+        // Add event listener to cancel button
+        document.getElementById("cancelButton").addEventListener("click", redirectToProfile);
+    
+        // Add event listener for when the user navigates away from the page
+        window.addEventListener("unload", function () {
+            redirectToProfile();
+        });
+    </script>
+    
+    
+    
 {% endblock %}

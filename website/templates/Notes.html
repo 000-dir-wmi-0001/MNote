@@ -48,6 +48,9 @@
     <li class="list-group-item Note-list" id="list-group-item-{{ note.id }}" style="list-style-type: none; width: 48%; margin-left:10px; height: fit-content;background-color: {{ note.color }};">
       <form method="POST" action="{{ url_for('views.update_title_note', note_id=note.id) }}" id="updateNoteForm-{{ note.id }}"> 
         <div style="text-align:left;">
+          <div style="float: left;"><mark id="highligh">{{ note.date }}</mark></div>
+          {% set combined_string = (note.data or '') ~ (note.title or '') %}
+          <span style="float:right">Total count: <markt id="highligh">{{ combined_string|replace(" ", "")|length }}</markt></span><br>
           <button type="button" class="close" onClick="DeleteNote({{ note.id }})" style="background: none; border: none; padding-right: 10px;">
             <i style="color: black; margin: 0; text-align: left; position: top-left;" class="material-symbols-outlined">delete</i>
           </button>
