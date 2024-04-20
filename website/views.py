@@ -189,7 +189,7 @@ def note():
         # If no sorting criterion is provided or it's invalid, return the unsorted notes
         sorted_notes = all_notes
 
-    return render_template('Notes.html', notes=sorted_notes, user=current_user)
+    return render_template('Notes.html', notes=sorted_notes, user=current_user, title='Notes')
 
 
  
