@@ -4,7 +4,7 @@ from http.client import HTTPException
 from itertools import count
 from tkinter import Image
 from typing import Optional
-from flask import Blueprint,  make_response, redirect, render_template, request, flash, jsonify, send_file, send_from_directory, url_for,current_app
+from flask import Blueprint,  make_response, redirect, render_template, render_template_string, request, flash, jsonify, send_file, send_from_directory, url_for,current_app
 from flask_login import login_required, current_user
 from pytest import Session
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -20,12 +20,13 @@ from io import BytesIO
 import base64
 from PIL import Image, ImageDraw, ImageFont
 from werkzeug.utils import secure_filename
-
-
+from flask_mail import Message
+from flask_mail import Mail
+from . import mail
 
 views = Blueprint('views', __name__)
 
-
+# mail = Mail(current_app)
 
 
 # ------------Pages--------------#
@@ -147,14 +148,6 @@ def serve_profile(filename):
     return send_from_directory(IMAGE_FOLDER, filename)
 
 
-# @views.route('/default-profile-picture')
-# def default_profile_picture():
-#     return send_from_directory('static', 'Admin.jpg')
-
-# @views.route('/default-profile-picture')
-# def default_profile_picture():
-#     static_directory = os.path.join(os.getcwd(), 'static')  # Get the absolute path to the 'static' directory
-#     return send_from_directory(static_directory, 'Admin.jpg')
 
 # ------------Note--------------#
 
@@ -376,27 +369,89 @@ def delete_audio():
 
 
 #---------------handle the feedback form-------------#
-@views.route('/feedback', methods=['POST','GET'])
+# @views.route('/feedback', methods=['POST','GET'])
+# @login_required
+# def  feedback():
+#     if request.method == 'POST':
+#         rating_option = request.form.get('rating')
+#         feedback_text = request.form.get('feedback')
+#         suggession_text = request.form.get('suggestions')
+#         name_f= request.form.get('name')
+#         email_f =request.form.get('email')
+       
+#         new_feedback_form = FeedbackForm(rating=rating_option,answer=feedback_text,  suggestion=suggession_text,name=name_f,email=email_f ,user_id=current_user.id, date=datetime.now())
+#         db.session.add(new_feedback_form)
+#         db.session.commit()
+#         flash('Thank for your feedback!', category='success')
+
+#     return render_template('feedback.html',user=current_user,title="FeedBack")
+
+
+
+                # testing
+
+
+@views.route('/feedback', methods=['POST', 'GET'])
 @login_required
-def  feedback():
+def feedback():
     if request.method == 'POST':
         rating_option = request.form.get('rating')
         feedback_text = request.form.get('feedback')
         suggession_text = request.form.get('suggestions')
-        name_f= request.form.get('name')
-        email_f =request.form.get('email')
-       
-        new_feedback_form = FeedbackForm(rating=rating_option,answer=feedback_text,  suggestion=suggession_text,name=name_f,email=email_f ,user_id=current_user.id, date=datetime.now())
+        name_f = request.form.get('name')
+        email_f = request.form.get('email')
+
+        new_feedback_form = FeedbackForm(rating=rating_option, answer=feedback_text, suggestion=suggession_text, name=name_f, email=email_f, user_id=current_user.id, date=datetime.now())
         db.session.add(new_feedback_form)
         db.session.commit()
-        flash('Thank for your feedback!', category='success')
+        flash('Thank you for your feedback!', category='success')
 
-    return render_template('feedback.html',user=current_user,title="FeedBack")
+        # Send greeting email
+        send_greeting_email(email_f,name_f)
+
+    return render_template('feedback.html', user=current_user, title="Feedback")
+
+def send_greeting_email(recipient_email,name):
+    # Create a greeting message
+    msg = Message(subject="Thank you for your feedback!",
+                  sender="Admin@example.com",
+                  recipients=[recipient_email])
+    # msg.body = f"Dear {name},\n\nThank you for taking the time to share your feedback with us. Your insights are incredibly valuable as they help us understand how we can better serve you and improve our services.\n\nWe are committed to continuously enhancing your experience and your feedback plays a crucial role in that process.\n\nShould you have any further thoughts or suggestions, please don't hesitate to reach out. We're here to listen!\n\nThank you once again for your contribution to making 'Al_Ansar Technologies' even better.\n\nBest regards,\nThe 'Al_Ansar Technologies' Team"
+#     msg.body = f"""Dear {name},
+
+# Thank you for taking the time to share your feedback with us. Your insights are incredibly valuable as they help us understand how we can better serve you and improve our services.
+
+# We are committed to continuously enhancing your experience and your feedback plays a crucial role in that process.
+
+# Should you have any further thoughts or suggestions, please don't hesitate to reach out. We're here to listen!
+
+# Thank you once again for your contribution to making <span style="background-color: lightgreen; padding: 2px; border-radius: 3px;">Al_Ansar Technologies</span> even better.
+
+# Best regards,
+# The Al_Ansar Technologies Team"""
 
 
+#     # Send the email
+#     mail.send(msg)
 
+    body = (
+        f"Dear *{name}*,\n\n"
+        "Thank you for taking the time to share your feedback with us. "
+        "Your insights are incredibly valuable as they help us understand how "
+        "we can better serve you and improve our services.\n\n"
+        "We are committed to continuously enhancing your experience, and your "
+        "feedback plays a crucial role in that process.\n\n"
+        "Should you have any further thoughts or suggestions, please don't "
+        "hesitate to reach out. We're here to listen!\n\n"
+        "Thank you once again for your contribution to making 'Al_Ansar Technologies' even better.\n\n"
+        "Best regards,\n"
+        "The *Al_Ansar Technologies* Team"
+    )
 
-
+    # Set the email body
+    msg.body = body
+    # Send the email
+    mail.send(msg)
 
 #----------------------about-us-------------------------#
 @views.route('/about', methods=['POST','GET'])

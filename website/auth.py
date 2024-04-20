@@ -94,53 +94,99 @@ IMAGE_FOLDER = 'D:/My_Project/App/uploads'
     
 #     return render_template("sign_up.html", user=current_user, title="Sign Up")
 
+# @auth.route('/sign-up', methods=['GET', 'POST'])
+# def sign_up():
+#     if current_user.is_authenticated:
+#         # If a user or admin is already logged in, redirect them to their respective dashboard
+#         if current_user.is_admin:
+#             return redirect(url_for('admin.admin_dashboard'))
+#         else:
+#             return redirect(url_for('views.home'))
+
+#     if request.method == 'POST':
+#         email = request.form.get('email')
+#         user_name = request.form.get('username')
+#         password1 = request.form.get('password1')
+#         password2 = request.form.get('password2')
+
+#         user = User.query.filter(User.email == email).first()
+#         if user:
+#             flash('Email already exists.', category='error')
+#         elif len(email) < 4:
+#             flash('Email must be greater than 3 characters.', category='error')
+#         elif len(user_name) < 1:
+#             flash('Username is required.', category='error')
+#         elif password1 != password2:
+#             flash('Passwords don\'t match.', category='error')
+#         elif len(password1) < 7:
+#             flash('Password must be at least 7 characters.', category='error')
+#         else:
+#             # Safely get the file from the request
+#             file = request.files.get('profile-picture')
+#             if file:
+#                 filename = secure_filename(file.filename)
+#                 file.save(os.path.join(current_app.config['IMAGE_FOLDER'], filename))
+#                 new_user = User(email=email, user_name=user_name, password=generate_password_hash(password1, method='pbkdf2:sha256'), profile_picture=filename)
+#             else:
+#                 new_user = User(email=email, user_name=user_name, password=generate_password_hash(password1, method='pbkdf2:sha256'))
+
+#             db.session.add(new_user)
+#             db.session.commit()
+
+#             login_user(new_user, remember=True)
+#             flash('Account created!', category='success')
+#             flash('You are Logged In Automatically', category='success')
+#             return redirect(url_for('auth.login'))  # Redirect to the login page
+    
+#     return render_template("sign_up.html", user=current_user, title="Sign Up")
+
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
-    if current_user.is_authenticated:
-        # If a user or admin is already logged in, redirect them to their respective dashboard
-        if current_user.is_admin:
-            return redirect(url_for('admin.admin_dashboard'))
-        else:
-            return redirect(url_for('views.home'))
-
     if request.method == 'POST':
         email = request.form.get('email')
         user_name = request.form.get('username')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
 
-        user = User.query.filter(User.email == email).first()
-        if user:
-            flash('Email already exists.', category='error')
-        elif len(email) < 4:
-            flash('Email must be greater than 3 characters.', category='error')
-        elif len(user_name) < 1:
-            flash('Username is required.', category='error')
-        elif password1 != password2:
-            flash('Passwords don\'t match.', category='error')
-        elif len(password1) < 7:
+        # Check if the email or username already exists in the database
+        user_exists = User.query.filter_by(email=email).first() or User.query.filter_by(user_name=user_name).first()
+        if user_exists:
+            flash('Email or username already exists.', category='error')
+            return redirect(url_for('auth.sign_up'))
+
+        # Ensure passwords match
+        if password1 != password2:
+            flash('Passwords do not match.', category='error')
+            return redirect(url_for('auth.sign_up'))
+
+        # Ensure password length is sufficient
+        if len(password1) < 7:
             flash('Password must be at least 7 characters.', category='error')
-        else:
-            # Safely get the file from the request
-            file = request.files.get('profile-picture')
-            if file:
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(current_app.config['IMAGE_FOLDER'], filename))
-                new_user = User(email=email, user_name=user_name, password=generate_password_hash(password1, method='pbkdf2:sha256'), profile_picture=filename)
-            else:
-                new_user = User(email=email, user_name=user_name, password=generate_password_hash(password1, method='pbkdf2:sha256'))
+            return redirect(url_for('auth.sign_up'))
 
-            db.session.add(new_user)
-            db.session.commit()
+        # Safely get the file from the request
+        profile_picture = request.files.get('profile-picture')
+        if profile_picture:
+            # Ensure the file is secure and save it to the uploads directory
+            filename = secure_filename(profile_picture.filename)
+            profile_picture.save(os.path.join('uploads', filename))
 
-            login_user(new_user, remember=True)
-            flash('Account created!', category='success')
-            flash('You are Logged In Automatically', category='success')
-            return redirect(url_for('auth.login'))  # Redirect to the login page
-    
-    return render_template("sign_up.html", user=current_user, title="Sign Up")
+        # Create a new user object with hashed password and profile picture filename if provided
+        new_user = User(email=email, user_name=user_name, password=generate_password_hash(password1, method='pbkdf2:sha256'))
+        if profile_picture:
+            new_user.profile_picture = filename
 
+        # Add the new user to the database
+        db.session.add(new_user)
+        db.session.commit()
 
+        # Log in the new user automatically and redirect to the login page
+        login_user(new_user, remember=True)
+        flash('Account created successfully! You are now logged in.', category='success')
+        return redirect(url_for('auth.login'))
+
+    # If request method is GET, render the sign-up form
+    return render_template('sign_up.html')
 
 
   
