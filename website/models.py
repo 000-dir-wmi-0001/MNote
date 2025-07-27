@@ -40,7 +40,6 @@
 #     is_draft = db.Column(db.Boolean, default=True)
 #     user = db.relationship('User', back_populates='canvastemplate')
 
-from anyio import Event
 from sqlalchemy.ext.hybrid import hybrid_property
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
