@@ -2,11 +2,9 @@
 import base64
 from http.client import HTTPException
 from itertools import count
-from tkinter import Image
 from typing import Optional
 from flask import Blueprint,  make_response, redirect, render_template, render_template_string, request, flash, jsonify, send_file, send_from_directory, url_for,current_app
 from flask_login import login_required, current_user
-from pytest import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import CanvasTemplate, Note, Recording, FeedbackForm, User
 from sqlalchemy.sql import func

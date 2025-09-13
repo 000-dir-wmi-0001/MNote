@@ -1,0 +1,32 @@
+# MNote - Multi-Format Note Taking Application
+# Required Python packages
+
+# Core Flask framework
+Flask==2.3.3
+
+# Database ORM
+Flask-SQLAlchemy==3.0.5
+
+# User authentication and session management
+Flask-Login==0.6.3
+
+# Email functionality
+Flask-Mail==0.9.1
+
+# Security utilities (included with Flask, but explicitly listed)
+Werkzeug==2.3.7
+
+# Image processing for profile pictures and canvas
+Pillow==10.0.1
+
+# Additional utilities that may be needed
+# (These are typically included with Python or Flask dependencies)
+# sqlalchemy>=1.4.0  # Included with Flask-SQLAlchemy
+# jinja2>=3.0.0      # Included with Flask
+# click>=8.0.0       # Included with Flask
+# itsdangerous>=2.0.0 # Included with Flask
+
+# Development dependencies (optional)
+# pytest==7.4.0       # For testing
+# black==23.7.0        # For code formatting
+# flake8==6.0.0        # For linting
